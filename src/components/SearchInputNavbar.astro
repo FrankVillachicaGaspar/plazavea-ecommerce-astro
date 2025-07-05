@@ -1,0 +1,21 @@
+---
+import { eq } from "drizzle-orm";
+import SearchBar from "../components/react/SearchBar.tsx";
+import { db } from "../db/db";
+import * as schema from "../db/schema";
+
+const productosConImagen = await db
+    .select({
+        producto: schema.productos,
+        imagen: schema.imagenes,
+    })
+    .from(schema.productos)
+    .leftJoin(
+        schema.imagenes,
+        eq(schema.productos.id, schema.imagenes.productoId)
+    );
+---
+
+<div class="flex w-full">
+    <SearchBar client:load productos={productosConImagen} />
+</div>

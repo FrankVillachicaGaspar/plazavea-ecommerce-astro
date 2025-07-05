@@ -1,0 +1,37 @@
+---
+import CarritoNavbar from "./CarritoNavbar.astro";
+import SearchInputNavbar from "./SearchInputNavbar.astro";
+---
+
+<div class="container mx-auto">
+    <div class="navbar max-h-[70px]!">
+        <div class="flex-1">
+            <a href="/" class="text-3xl text-white"> plazavea </a>
+        </div>
+        <SearchInputNavbar />
+        <div class="flex gap-4">
+            <CarritoNavbar />
+            <div class="dropdown dropdown-end">
+                <div
+                    tabindex="0"
+                    role="button"
+                    class="btn btn-ghost btn-circle avatar flex group"
+                >
+                    <i
+                        class="fa fa-user m-auto text-xl text-white group-hover:text-black"
+                    ></i>
+                </div>
+                <ul
+                    tabindex="0"
+                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                >
+                    <li>
+                        <a class="justify-between"> Profile </a>
+                    </li>
+                    <li><a>Settings</a></li>
+                    <li><a>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

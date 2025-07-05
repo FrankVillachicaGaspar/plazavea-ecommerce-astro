@@ -1,0 +1,64 @@
+---
+import { and, eq, gt, lte, sql } from "drizzle-orm";
+import { db } from "../../db/db";
+import * as schema from "../../db/schema";
+import Layout from "../../layouts/Layout.astro";
+import ProductGrid from "../../components/react/ProductGrid";
+import ProductFilters from "../../components/ProductFilters.astro";
+
+const url = new URL(Astro.request.url);
+const categoria = url.searchParams.get("categoria");
+const precioMax = url.searchParams.get("precioMax");
+const orden = url.searchParams.get("orden");
+
+console.log(url, categoria, precioMax, orden);
+
+let whereClause = [gt(schema.productos.stock, 0)];
+
+if (categoria) {
+    whereClause.push(eq(schema.productos.categoriaId, Number(categoria)));
+}
+
+if (precioMax) {
+    whereClause.push(lte(schema.productos.precio, Number(precioMax)));
+}
+
+if (precioMax) {
+    whereClause.push(lte(schema.productos.precio, Number(precioMax)));
+}
+
+const orderClause = (() => {
+    switch (orden) {
+        case "precioAsc":
+            return schema.productos.precio;
+        case "precioDesc":
+            return sql`${schema.productos.precio} DESC`;
+        default:
+            return sql`RANDOM()`;
+    }
+})();
+
+const productosConImagen = await db
+    .select({
+        producto: schema.productos,
+        imagen: schema.imagenes,
+    })
+    .from(schema.productos)
+    .leftJoin(
+        schema.imagenes,
+        eq(schema.productos.id, schema.imagenes.productoId)
+    )
+    .where(and(...whereClause))
+    .orderBy(orderClause);
+---
+
+<Layout>
+    <div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8 p-6">
+        <ProductFilters />
+        <ProductGrid
+            client:load
+            productsWithImage={productosConImagen}
+            pageSize={20}
+        />
+    </div>
+</Layout>

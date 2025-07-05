@@ -1,0 +1,1 @@
+ALTER TABLE `categorias` ADD `image_url` text DEFAULT 'https://via.assets.so/img.jpg?w=240&h=145&tc=red&bg=%23f1f1f1';

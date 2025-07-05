@@ -1,0 +1,71 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+import { db } from "../../db/db";
+import * as schema from "../../db/schema";
+import { eq } from "drizzle-orm";
+
+const usuarioId = 1;
+
+const items = await db
+    .select({
+        productoId: schema.carrito.productoId,
+        cantidad: schema.carrito.cantidad,
+        nombre: schema.productos.nombre,
+        precio: schema.productos.precio,
+    })
+    .from(schema.carrito)
+    .leftJoin(
+        schema.productos,
+        eq(schema.productos.id, schema.carrito.productoId)
+    )
+    .where(eq(schema.carrito.usuarioId, usuarioId));
+
+const total = items.reduce((sum, item) => {
+    return sum + (item.precio ?? 0) * item.cantidad;
+}, 0);
+---
+
+<Layout>
+    <div class="max-w-5xl mx-auto px-4 py-12">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">🛍 Tu Carrito</h1>
+
+        {
+            items.length > 0 ? (
+                <div class="space-y-6">
+                    {items.map((item) => (
+                        <div class="flex justify-between items-center border-b pb-4">
+                            <div>
+                                <p class="text-lg font-semibold text-gray-700">
+                                    {item.nombre}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Cantidad: {item.cantidad} × s/. 
+                                    {item.precio?.toFixed(2)}
+                                </p>
+                            </div>
+                            <p class="text-lg font-bold text-primary">
+                                s/. {(item.precio ?? 0 * item.cantidad).toFixed(2)}
+                            </p>
+                        </div>
+                    ))}
+
+                    <div class="text-right border-t pt-4">
+                        <p class="text-xl font-bold text-gray-800">
+                            Total: s/. {total.toFixed(2)}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-end gap-4 mt-6">
+                        <a href="/" class="btn btn-outline">
+                            Seguir comprando
+                        </a>
+                        <button class="btn btn-primary">Ir a pagar</button>
+                    </div>
+                </div>
+            ) : (
+                <p class="text-gray-500">Tu carrito está vacío.</p>
+            )
+        }
+    </div>
+</Layout>

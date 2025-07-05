@@ -1,0 +1,62 @@
+---
+import { db } from "../db/db";
+import * as schema from "../db/schema";
+import { eq, sql } from "drizzle-orm";
+
+// Traer productos recomendados
+const recomendados = await db
+    .select({
+        producto: schema.productos,
+        imagen: schema.imagenes,
+    })
+    .from(schema.productosRecomendados)
+    .innerJoin(
+        schema.productos,
+        eq(schema.productosRecomendados.recomendadoId, schema.productos.id)
+    )
+    .leftJoin(
+        schema.imagenes,
+        eq(schema.productos.id, schema.imagenes.productoId)
+    )
+    .orderBy(sql`RANDOM()`)
+    .limit(6);
+---
+
+{
+    recomendados.length > 0 && (
+        <section class="mt-12 w-full">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                También te puede interesar
+            </h2>
+            <div class="carousel carousel-center space-x-4 p-4 w-full flex justify-between">
+                {recomendados.map(({ producto, imagen }) => (
+                    <div class="carousel-item min-w-[220px]">
+                        <a
+                            href={`/products/${producto.id}`}
+                            class="block w-[220px]"
+                        >
+                            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                                <img
+                                    src={
+                                        imagen?.url ??
+                                        "https://via.placeholder.com/300x200"
+                                    }
+                                    alt={producto.nombre}
+                                    class="w-full h-40 object-cover"
+                                />
+                                <div class="p-3">
+                                    <h3 class="text-sm font-semibold text-gray-800 truncate">
+                                        {producto.nombre}
+                                    </h3>
+                                    <p class="text-indigo-600 font-bold text-sm mt-1">
+                                        S/. {producto.precio}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </section>
+    )
+}

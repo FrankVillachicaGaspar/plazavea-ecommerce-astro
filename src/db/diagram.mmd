@@ -1,0 +1,39 @@
+erDiagram
+  USUARIOS ||--o{ CARRITO : tiene
+  USUARIOS ||--o{ PAGOS : realiza
+  CATEGORIAS ||--o{ PRODUCTOS : contiene
+  PRODUCTOS ||--o{ CARRITO : en
+  PRODUCTOS ||--o{ PRODUCTOS_RECOMENDADOS : relacionado_con
+  PRODUCTOS ||--o{ PRODUCTOS_RECOMENDADOS : es_recomendado_de
+  PRODUCTOS_RECOMENDADOS {
+    integer producto_id
+    integer recomendado_id
+  }
+  USUARIOS {
+    integer id
+    text nombre
+    text email
+  }
+  PRODUCTOS {
+    integer id
+    text nombre
+    real precio
+    integer stock
+  }
+  CATEGORIAS {
+    integer id
+    text nombre
+  }
+  CARRITO {
+    integer usuario_id
+    integer producto_id
+    integer cantidad
+  }
+  PAGOS {
+    integer id
+    integer usuario_id
+    real total
+    text metodo
+    text ultima4
+    text estado
+  }

@@ -1,0 +1,79 @@
+---
+import { db } from "../db/db";
+import type { Category } from "../db/schema";
+
+const categorias: Category[] = await db.query.categorias.findMany();
+
+const url = new URL(Astro.request.url);
+const categoria = url.searchParams.get("categoria");
+const precioMax = url.searchParams.get("precioMax");
+const orden = url.searchParams.get("orden");
+---
+
+<aside class="bg-white rounded-lg shadow p-4 w-full sm:w-64 h-fit">
+    <h2 class="text-xl font-semibold mb-4">Filtros</h2>
+
+    <form id="filter-form" method="get" action="/products" class="space-y-4">
+        <!-- Categoría -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700"
+                >Categoría</label
+            >
+            <select name="categoria" class="select select-bordered w-full mt-1">
+                <option value="" selected={categoria === ""}>Todas</option>
+                {
+                    categorias.map((c) => (
+                        <option
+                            value={c.id}
+                            selected={categoria && Number(categoria) === c.id}
+                        >
+                            {c.nombre}
+                        </option>
+                    ))
+                }
+            </select>
+        </div>
+
+        <!-- Precio -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700"
+                >Precio máximo</label
+            >
+            <input
+                type="number"
+                name="precioMax"
+                placeholder="Ej: 100"
+                class="input input-bordered w-full mt-1"
+                value={precioMax ?? ""}
+            />
+        </div>
+
+        <!-- Orden -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700"
+                >Ordenar por</label
+            >
+            <select name="orden" class="select select-bordered w-full mt-1">
+                <option
+                    value="random"
+                    selected={orden === "random" || orden === ""}
+                    >Aleatorio</option
+                >
+                <option
+                    value="precioAsc"
+                    selected={orden === "precioAsc" || orden === ""}
+                    >Precio (Ascendente)</option
+                >
+                <option
+                    value="precioDesc"
+                    selected={orden === "precioDesc" || orden === ""}
+                    >Precio (Descendente)</option
+                >
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full"
+            >Aplicar filtros</button
+        >
+    </form>
+</aside>
