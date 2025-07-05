@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "../../db/db";
-import * as schema from "../../db/schema";
+import { db } from "../../../db/db";
+import * as schema from "../../../db/schema";
 import type { APIRoute } from "astro";
 
 export const POST: APIRoute = async ({ params, request }) => {
@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ params, request }) => {
             .where(
                 and(
                     eq(schema.carrito.usuarioId, 1),
-                    eq(schema.productos.id, productoId)
+                    eq(schema.carrito.productoId, productoId)
                 )
             );
     } else {

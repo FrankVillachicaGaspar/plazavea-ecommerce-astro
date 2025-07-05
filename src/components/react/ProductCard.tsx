@@ -7,7 +7,7 @@ interface Props {
 
 export default function ProductCard({ product, image }: Props) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden w-[280px]">
+    <a href={`/products/${product.id}`} className="bg-white rounded-lg shadow-md overflow-hidden w-[280px]">
       <img
         src={image?.url || "https://via.placeholder.com/300x200"}
         alt={product.nombre}
@@ -21,6 +21,6 @@ export default function ProductCard({ product, image }: Props) {
           Agregar al carrito
         </button>
       </div>
-    </div>
+    </a>
   );
 }

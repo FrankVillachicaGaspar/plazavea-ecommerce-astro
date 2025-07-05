@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 
 import { db } from "../../db/db";
 import * as schema from "../../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 const usuarioId = 1;
 
@@ -13,6 +13,7 @@ const items = await db
         cantidad: schema.carrito.cantidad,
         nombre: schema.productos.nombre,
         precio: schema.productos.precio,
+        imageUrl: sql<string>`(select i.url from imagenes i where i.producto_id = ${schema.productos.id} limit 1)`,
     })
     .from(schema.carrito)
     .leftJoin(
@@ -24,48 +25,417 @@ const items = await db
 const total = items.reduce((sum, item) => {
     return sum + (item.precio ?? 0) * item.cantidad;
 }, 0);
+
+const subtotal = total;
+const envio = items.length > 0 ? 15.00 : 0;
+const impuestos = total * 0.18; // 18% IGV
+const totalFinal = subtotal + envio + impuestos;
 ---
 
 <Layout>
-    <div class="max-w-5xl mx-auto px-4 py-12">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">🛍 Tu Carrito</h1>
+    <div class="min-h-screen">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <div class="breadcrumbs text-sm">
+                    <ul>
+                        <li><a href="/" class="text-primary">Inicio</a></li>
+                        <li><a href="/productos" class="text-primary">Productos</a></li>
+                        <li>Carrito</li>
+                    </ul>
+                </div>
+                <h1 class="text-4xl font-bold text-base-content mt-4">
+                    🛍️ Tu Carrito
+                    {items.length > 0 && (
+                        <span class="text-lg font-normal text-base-content/70">
+                            ({items.length} {items.length === 1 ? 'producto' : 'productos'})
+                        </span>
+                    )}
+                </h1>
+            </div>
 
-        {
-            items.length > 0 ? (
-                <div class="space-y-6">
-                    {items.map((item) => (
-                        <div class="flex justify-between items-center border-b pb-4">
-                            <div>
-                                <p class="text-lg font-semibold text-gray-700">
-                                    {item.nombre}
-                                </p>
-                                <p class="text-sm text-gray-500">
-                                    Cantidad: {item.cantidad} × s/. 
-                                    {item.precio?.toFixed(2)}
-                                </p>
+            {items.length > 0 ? (
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Lista de productos -->
+                    <div class="lg:col-span-2">
+                        <div class="card bg-base-100 shadow-lg">
+                            <div class="card-body">
+                                <h2 class="card-title text-xl mb-4">Productos en tu carrito</h2>
+                                
+                                <div class="space-y-4">
+                                    {items.map((item) => (
+                                        <div class="flex flex-col sm:flex-row gap-4 p-4 border border-base-300 rounded-lg hover:shadow-md transition-shadow">
+                                            <!-- Imagen del producto (placeholder) -->
+                                            <div class="flex-shrink-0">
+                                                <div class="w-24 h-24 bg-base-300 rounded-lg flex items-center justify-center">
+                                                    <img src={item.imageUrl} alt="producto_imagen">
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Información del producto -->
+                                            <div class="flex-1">
+                                                <h3 class="font-semibold text-lg text-base-content mb-2">
+                                                    {item.nombre}
+                                                </h3>
+                                                <p class="text-base-content/70 text-sm mb-2">
+                                                    Precio unitario: <span class="font-medium">s/. {item.precio?.toFixed(2)}</span>
+                                                </p>
+                                                
+                                                <!-- Controles de cantidad -->
+                                                <div class="flex items-center gap-3 mb-3">
+                                                    <span class="text-sm text-base-content/70">Cantidad:</span>
+                                                    <div class="flex items-center gap-2">
+                                                        <button 
+                                                            class="btn btn-sm btn-circle btn-outline btn-error decrease-btn"
+                                                            data-product-id={item.productoId}
+                                                            disabled={item.cantidad <= 1}
+                                                        >
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                                            </svg>
+                                                        </button>
+                                                        <span class="w-8 text-center font-medium">{item.cantidad}</span>
+                                                        <button 
+                                                            class="btn btn-sm btn-circle btn-outline btn-success increase-btn"
+                                                            data-product-id={item.productoId}
+                                                        >
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Subtotal del producto -->
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-lg font-bold text-error">
+                                                        s/. {((item.precio ?? 0) * item.cantidad).toFixed(2)}
+                                                    </span>
+                                                    <button 
+                                                        class="btn btn-sm btn-ghost btn-error remove-btn text-white"
+                                                        data-product-id={item.productoId}
+                                                    >
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                        </svg>
+                                                        Eliminar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                <!-- Botón para limpiar carrito -->
+                                <div class="divider"></div>
+                                <div class="text-center">
+                                    <button class="btn btn-outline btn-error btn-sm text-white!" id="clear-cart">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        Vaciar carrito
+                                    </button>
+                                </div>
                             </div>
-                            <p class="text-lg font-bold text-primary">
-                                s/. {(item.precio ?? 0 * item.cantidad).toFixed(2)}
-                            </p>
                         </div>
-                    ))}
-
-                    <div class="text-right border-t pt-4">
-                        <p class="text-xl font-bold text-gray-800">
-                            Total: s/. {total.toFixed(2)}
-                        </p>
                     </div>
-
-                    <div class="flex justify-end gap-4 mt-6">
-                        <a href="/" class="btn btn-outline">
-                            Seguir comprando
-                        </a>
-                        <button class="btn btn-primary">Ir a pagar</button>
+                    
+                    <!-- Resumen del pedido -->
+                    <div class="lg:col-span-1">
+                        <div class="card bg-base-100 shadow-lg sticky top-4">
+                            <div class="card-body">
+                                <h2 class="card-title text-xl mb-4">Resumen del pedido</h2>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span>Subtotal:</span>
+                                        <span>s/. {subtotal.toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Envío:</span>
+                                        <span>s/. {envio.toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>IGV (18%):</span>
+                                        <span>s/. {impuestos.toFixed(2)}</span>
+                                    </div>
+                                    <div class="divider my-2"></div>
+                                    <div class="flex justify-between text-lg font-bold">
+                                        <span>Total:</span>
+                                        <span class="text-error">s/. {totalFinal.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Botones de acción -->
+                                <div class="mt-6 space-y-3">
+                                    <a href="/pago" class="btn btn-error btn-block text-white">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                        Proceder al pago
+                                    </a>
+                                    <a href="/productos" class="btn btn-outline btn-block">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                                        </svg>
+                                        Seguir comprando
+                                    </a>
+                                </div>
+                                
+                                <!-- Garantías -->
+                                <div class="mt-6 space-y-2">
+                                    <div class="flex items-center gap-2 text-sm text-base-content/70">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                        </svg>
+                                        <span>Pago seguro</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-sm text-base-content/70">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                                        </svg>
+                                        <span>Envío gratis en pedidos +s/. 100</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-sm text-base-content/70">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                        <span>Garantía de satisfacción</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             ) : (
-                <p class="text-gray-500">Tu carrito está vacío.</p>
-            )
-        }
+                <!-- Carrito vacío -->
+                <div class="text-center py-16">
+                    <div class="card bg-base-100 shadow-lg max-w-md mx-auto">
+                        <div class="card-body items-center text-center">
+                            <div class="w-24 h-24 bg-base-300 rounded-full flex items-center justify-center mb-4">
+                                <svg class="w-12 h-12 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.707 2.707A1 1 0 005 16h16M7 13v4a2 2 0 002 2h6a2 2 0 002-2v-4m-8 2h4"/>
+                                </svg>
+                            </div>
+                            <h2 class="card-title text-xl mb-2">Tu carrito está vacío</h2>
+                            <p class="text-base-content/70 mb-6">¡Agrega algunos productos increíbles para comenzar!</p>
+                            <div class="card-actions">
+                                <a href="/productos" class="btn btn-error">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                    </svg>
+                                    Explorar productos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    </div>
+
+    <!-- Loading modal -->
+    <div id="loading-modal" class="modal">
+        <div class="modal-box">
+            <div class="flex items-center justify-center">
+                <span class="loading loading-spinner loading-lg text-error"></span>
+                <span class="ml-4">Actualizando carrito...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toast-container" class="toast toast-top toast-end">
+        <!-- Los toasts se insertarán aquí dinámicamente -->
     </div>
 </Layout>
+
+<script is:inline>
+    // Función para mostrar toast
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
+        toast.innerHTML = `
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z'}"/>
+            </svg>
+            <span>${message}</span>
+        `;
+        container.appendChild(toast);
+        
+        // Remover toast después de 3 segundos
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    // Función para mostrar/ocultar modal de loading
+    function toggleLoading(show) {
+        const modal = document.getElementById('loading-modal');
+        if (show) {
+            modal.classList.add('modal-open');
+        } else {
+            modal.classList.remove('modal-open');
+        }
+    }
+
+    // Función para hacer peticiones
+    async function makeRequest(url, options = {}) {
+        try {
+            toggleLoading(true);
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                ...options,
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error en la petición:', error);
+            showToast('Error al actualizar el carrito', 'error');
+            throw error;
+        } finally {
+            toggleLoading(false);
+        }
+    }
+
+    // Aumentar cantidad
+    document.querySelectorAll('.increase-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const productId = this.dataset.productId;
+            try {
+                await makeRequest('/api/carrito', {
+                    method: 'POST',
+                    body: JSON.stringify({ productoId: parseInt(productId) }),
+                });
+                showToast('Cantidad aumentada correctamente');
+                // Recargar la página para mostrar cambios
+                setTimeout(() => window.location.reload(), 500);
+            } catch (error) {
+                console.error('Error al aumentar cantidad:', error);
+            }
+        });
+    });
+
+    // Disminuir cantidad
+    document.querySelectorAll('.decrease-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const productId = this.dataset.productId;
+            try {
+                await makeRequest('/api/carrito/disminuir', {
+                    method: 'POST',
+                    body: JSON.stringify({ productoId: parseInt(productId) }),
+                });
+                showToast('Cantidad disminuida correctamente');
+                // Recargar la página para mostrar cambios
+                setTimeout(() => window.location.reload(), 500);
+            } catch (error) {
+                console.error('Error al disminuir cantidad:', error);
+            }
+        });
+    });
+
+    // Eliminar producto
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const productId = this.dataset.productId;
+            
+            // Confirmar eliminación
+            if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
+                try {
+                    await makeRequest(`/api/carrito/${productId}`, {
+                        method: 'DELETE',
+                    });
+                    showToast('Producto eliminado del carrito');
+                    // Recargar la página para mostrar cambios
+                    setTimeout(() => window.location.reload(), 500);
+                } catch (error) {
+                    console.error('Error al eliminar producto:', error);
+                }
+            }
+        });
+    });
+
+    // Limpiar carrito
+    document.getElementById('clear-cart')?.addEventListener('click', async function() {
+        if (confirm('¿Estás seguro de que quieres vaciar todo el carrito?')) {
+            try {
+                // Aquí tendrías que implementar un endpoint para limpiar todo el carrito
+                // Por ahora, eliminamos producto por producto
+                const products = document.querySelectorAll('.remove-btn');
+                for (const btn of products) {
+                    const productId = btn.dataset.productId;
+                    await makeRequest(`/carrito/${productId}`, {
+                        method: 'DELETE',
+                    });
+                }
+                showToast('Carrito vaciado correctamente');
+                setTimeout(() => window.location.reload(), 500);
+            } catch (error) {
+                console.error('Error al limpiar carrito:', error);
+            }
+        }
+    });
+</script>
+
+<style>
+    /* Estilos personalizados para el tema rojo */
+    .btn-error {
+        background-color: #dc2626;
+        border-color: #dc2626;
+    }
+    
+    .btn-error:hover {
+        background-color: #b91c1c;
+        border-color: #b91c1c;
+    }
+    
+    .text-error {
+        color: #dc2626;
+    }
+    
+    .btn-outline.btn-error {
+        color: #dc2626;
+        border-color: #dc2626;
+    }
+    
+    .btn-outline.btn-error:hover {
+        background-color: #dc2626;
+        border-color: #dc2626;
+        color: white;
+    }
+    
+    .btn-outline.btn-success {
+        color: #16a34a;
+        border-color: #16a34a;
+    }
+    
+    .btn-outline.btn-success:hover {
+        background-color: #16a34a;
+        border-color: #16a34a;
+        color: white;
+    }
+    
+    /* Animaciones suaves */
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .btn {
+        transition: all 0.2s ease;
+    }
+    
+    /* Sticky behavior para el resumen */
+    @media (min-width: 1024px) {
+        .sticky {
+            position: sticky;
+            top: 1rem;
+        }
+    }
+</style>

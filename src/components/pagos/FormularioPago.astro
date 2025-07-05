@@ -1,0 +1,263 @@
+<div class="bg-white rounded-xl shadow-lg p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Información de pago</h2>
+
+    <form class="space-y-6">
+        <!-- Información personal -->
+        <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                Información de contacto
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="label">
+                        <span class="label-text">Nombre *</span>
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Juan"
+                        class="input input-bordered w-full"
+                        required
+                    />
+                </div>
+                <div>
+                    <label class="label">
+                        <span class="label-text">Apellido *</span>
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Pérez"
+                        class="input input-bordered w-full"
+                        required
+                    />
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="label">
+                    <span class="label-text">Email *</span>
+                </label>
+                <input
+                    type="email"
+                    placeholder="juan@example.com"
+                    class="input input-bordered w-full"
+                    required
+                />
+            </div>
+        </div>
+
+        <!-- Método de pago -->
+        <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                Método de pago
+            </h3>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <label class="cursor-pointer">
+                    <input
+                        type="radio"
+                        name="payment-method"
+                        value="card"
+                        class="radio radio-error"
+                        checked
+                    />
+                    <span class="label-text ml-2">Tarjeta</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input
+                        type="radio"
+                        name="payment-method"
+                        value="paypal"
+                        class="radio radio-error"
+                    />
+                    <span class="label-text ml-2">PayPal</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input
+                        type="radio"
+                        name="payment-method"
+                        value="transfer"
+                        class="radio radio-error"
+                    />
+                    <span class="label-text ml-2">Transferencia</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Datos de la tarjeta -->
+        <div id="card-details">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                Datos de la tarjeta
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="label">
+                        <span class="label-text">Número de tarjeta *</span>
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="1234 5678 9012 3456"
+                        class="input input-bordered w-full"
+                        maxlength="19"
+                        required
+                    />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="label">
+                            <span class="label-text"
+                                >Fecha de vencimiento *</span
+                            >
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="MM/YY"
+                            class="input input-bordered w-full"
+                            maxlength="5"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="label">
+                            <span class="label-text">CVV *</span>
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="123"
+                            class="input input-bordered w-full"
+                            maxlength="4"
+                            required
+                        />
+                    </div>
+                </div>
+                <div>
+                    <label class="label">
+                        <span class="label-text">Nombre en la tarjeta *</span>
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Juan Pérez"
+                        class="input input-bordered w-full"
+                        required
+                    />
+                </div>
+            </div>
+        </div>
+
+        <!-- Dirección de facturación -->
+        <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                Dirección de facturación
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="label">
+                        <span class="label-text">Dirección *</span>
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Calle Principal 123"
+                        class="input input-bordered w-full"
+                        required
+                    />
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="label">
+                            <span class="label-text">Ciudad *</span>
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="Lima"
+                            class="input input-bordered w-full"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="label">
+                            <span class="label-text">Código postal *</span>
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="15001"
+                            class="input input-bordered w-full"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="label">
+                            <span class="label-text">País *</span>
+                        </label>
+                        <select class="select select-bordered w-full" required>
+                            <option disabled selected>Selecciona país</option>
+                            <option>Perú</option>
+                            <option>Colombia</option>
+                            <option>Chile</option>
+                            <option>Argentina</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkbox de términos -->
+        <div class="form-control">
+            <label class="label cursor-pointer justify-start">
+                <input
+                    type="checkbox"
+                    class="checkbox text-white bg-white checked:border-red-600 checked:bg-red-500 checked:text-white"
+                    required
+                />
+                <span class="label-text">
+                    Acepto los <a href="#" class="text-red-600 hover:underline"
+                        >términos y condiciones</a
+                    >
+                    y la <a href="#" class="text-red-600 hover:underline"
+                        >política de privacidad</a
+                    >
+                </span>
+            </label>
+        </div>
+
+        <!-- Botón de pago -->
+        <button
+            type="submit"
+            class="btn bg-red-500 w-full text-white text-lg py-3 h-auto"
+        >
+            <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                ></path>
+            </svg>
+            Pagar $289.98
+        </button>
+
+        <!-- Seguridad -->
+        <div class="text-center text-sm text-gray-600">
+            <div class="flex items-center justify-center space-x-2">
+                <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                    ></path>
+                </svg>
+                <span>Pago seguro y encriptado</span>
+            </div>
+            <p class="mt-2">
+                Tus datos están protegidos con encriptación SSL de 256 bits
+            </p>
+        </div>
+    </form>
+</div>

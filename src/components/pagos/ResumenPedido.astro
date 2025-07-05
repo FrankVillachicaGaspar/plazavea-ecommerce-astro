@@ -1,0 +1,76 @@
+---
+import { eq, sql } from "drizzle-orm";
+import { db } from "../../db/db";
+import * as schema from "../../db/schema";
+import { priceFormatterToPE } from "../../utils/priceFormatter";
+
+const items = await db
+    .select({
+        productoId: schema.carrito.productoId,
+        nombre: schema.productos.nombre,
+        precio: schema.productos.precio,
+        cantidad: schema.carrito.cantidad,
+        imageUrl: sql<string>`(select i.url from imagenes i where i.producto_id = ${schema.productos.id} limit 1)`,
+    })
+    .from(schema.carrito)
+    .innerJoin(
+        schema.productos,
+        eq(schema.productos.id, schema.carrito.productoId)
+    )
+    .where(eq(schema.carrito.usuarioId, 1));
+
+console.log(items);
+
+const itemsConTotal = items.map((item) => ({
+    ...item,
+    total: (item.precio ?? 0) * item.cantidad,
+}));
+---
+
+<div class="bg-white rounded-xl shadow-lg p-6 h-fit">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Resumen del pedido</h2>
+
+    <div class="space-y-4 max-h-[500px] overflow-x-auto pe-4">
+        {
+            itemsConTotal.map((item) => (
+                <div class="flex justify-between items-center py-3 border-b">
+                    <div class="flex items-center space-x-3">
+                        <img
+                            src={item.imageUrl}
+                            alt="Producto"
+                            class="w-15 h-15 object-cover rounded-lg"
+                        />
+                        <div>
+                            <h3 class="font-semibold text-gray-800">
+                                {item.nombre}
+                            </h3>
+                            <p class="text-sm text-gray-600">
+                                Cantidad: {item.cantidad}
+                            </p>
+                        </div>
+                    </div>
+                    <span class="font-bold text-lg text-gray-800">
+                        {priceFormatterToPE.format(item.total)}
+                    </span>
+                </div>
+            ))
+        }
+    </div>
+
+    <div class="mt-6 space-y-2">
+        <div class="divider"></div>
+        <div class="flex justify-between text-xl font-bold text-gray-800">
+            <span>Total:</span>
+            <span class="text-red-600"
+                >{
+                    priceFormatterToPE.format(
+                        itemsConTotal.reduce(
+                            (acum, item) => acum + item.total,
+                            0
+                        )
+                    )
+                }</span
+            >
+        </div>
+    </div>
+</div>
