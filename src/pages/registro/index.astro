@@ -1,0 +1,524 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+    <div class="max-w-2xl mx-auto">
+      <!-- Breadcrumb -->
+      <div class="text-sm breadcrumbs mb-6">
+        <ul>
+          <li><a href="/" class="text-red-500">Inicio</a></li>
+          <li>Registro</li>
+        </ul>
+      </div>
+
+      <!-- Registration Card -->
+      <div class="card bg-white shadow-xl">
+        <div class="card-body">
+          <h1 class="card-title text-3xl mb-6 text-red-500">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            Crear Cuenta
+          </h1>
+          
+          <p class="text-gray-600 mb-8">
+            Únete a Plaza Vea y disfruta de ofertas exclusivas, delivery gratuito y mucho más.
+          </p>
+
+          <form id="registroForm" class="space-y-6">
+            <!-- Información Personal -->
+            <div class="border-l-4 border-red-500 pl-4">
+              <h2 class="text-xl font-semibold text-gray-800 mb-4">Información Personal</h2>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Nombres *</span>
+                  </label>
+                  <input type="text" name="nombre" placeholder="Ingresa tus nombres" 
+                         class="input input-bordered focus:border-red-500" required>
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Apellidos *</span>
+                  </label>
+                  <input type="text" name="apellidos" placeholder="Ingresa tus apellidos" 
+                         class="input input-bordered focus:border-red-500" required>
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Email *</span>
+                  </label>
+                  <input type="email" name="email" placeholder="ejemplo@correo.com" 
+                         class="input input-bordered focus:border-red-500" required>
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Teléfono</span>
+                  </label>
+                  <input type="tel" name="telefono" placeholder="999 999 999" 
+                         class="input input-bordered focus:border-red-500">
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Fecha de Nacimiento</span>
+                  </label>
+                  <input type="date" name="fechaNacimiento" 
+                         class="input input-bordered focus:border-red-500">
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Género</span>
+                  </label>
+                  <select name="genero" class="select select-bordered focus:border-red-500">
+                    <option value="">Seleccionar</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Documento de Identidad -->
+            <div class="border-l-4 border-red-500 pl-4">
+              <h2 class="text-xl font-semibold text-gray-800 mb-4">Documento de Identidad</h2>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Tipo de Documento</span>
+                  </label>
+                  <select name="tipoDocumento" class="select select-bordered focus:border-red-500">
+                    <option value="DNI">DNI</option>
+                    <option value="CE">Carnet de Extranjería</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                  </select>
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Número de Documento</span>
+                  </label>
+                  <input type="text" name="numeroDocumento" placeholder="12345678" 
+                         class="input input-bordered focus:border-red-500">
+                </div>
+              </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="border-l-4 border-red-500 pl-4">
+              <h2 class="text-xl font-semibold text-gray-800 mb-4">Dirección de Entrega</h2>
+              
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Departamento</span>
+                  </label>
+                  <select name="departamento" class="select select-bordered focus:border-red-500">
+                    <option value="">Seleccionar</option>
+                    <option value="Lima">Lima</option>
+                    <option value="Callao">Callao</option>
+                    <option value="Arequipa">Arequipa</option>
+                    <option value="Trujillo">Trujillo</option>
+                    <option value="Chiclayo">Chiclayo</option>
+                  </select>
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Provincia</span>
+                  </label>
+                  <input type="text" name="provincia" placeholder="Provincia" 
+                         class="input input-bordered focus:border-red-500">
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Distrito</span>
+                  </label>
+                  <input type="text" name="distrito" placeholder="Distrito" 
+                         class="input input-bordered focus:border-red-500">
+                </div>
+              </div>
+
+              <div class="form-control mt-4">
+                <label class="label">
+                  <span class="label-text font-medium">Dirección</span>
+                </label>
+                <input type="text" name="direccion" placeholder="Av. Principal 123" 
+                       class="input input-bordered focus:border-red-500">
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Referencia</span>
+                  </label>
+                  <input type="text" name="referencia" placeholder="Cerca al parque" 
+                         class="input input-bordered focus:border-red-500">
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Código Postal</span>
+                  </label>
+                  <input type="text" name="codigoPostal" placeholder="15001" 
+                         class="input input-bordered focus:border-red-500">
+                </div>
+              </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="border-l-4 border-red-500 pl-4">
+              <h2 class="text-xl font-semibold text-gray-800 mb-4">Configurar Contraseña</h2>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Contraseña *</span>
+                  </label>
+                  <input type="password" name="password" placeholder="••••••••" 
+                         class="input input-bordered focus:border-red-500" required>
+                  <label class="label">
+                    <span class="label-text-alt text-gray-500">Mínimo 8 caracteres</span>
+                  </label>
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Confirmar Contraseña *</span>
+                  </label>
+                  <input type="password" name="confirmPassword" placeholder="••••••••" 
+                         class="input input-bordered focus:border-red-500" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Términos y Condiciones -->
+            <div class="border-l-4 border-red-500 pl-4">
+              <h2 class="text-xl font-semibold text-gray-800 mb-4">Términos y Condiciones</h2>
+              
+              <div class="form-control">
+                <label class="label cursor-pointer justify-start">
+                  <input type="checkbox" name="aceptaTerminos" class="checkbox checkbox-error mr-3" required>
+                  <span class="label-text">
+                    Acepto los <a href="/terminos" class="text-red-500 underline">Términos y Condiciones</a> 
+                    y las <a href="/privacidad" class="text-red-500 underline">Políticas de Privacidad</a> *
+                  </span>
+                </label>
+              </div>
+
+              <div class="form-control mt-2">
+                <label class="label cursor-pointer justify-start">
+                  <input type="checkbox" name="aceptaMarketing" class="checkbox checkbox-error mr-3">
+                  <span class="label-text">
+                    Acepto recibir ofertas y promociones por email y SMS
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Botón de Registro -->
+            <div class="text-center pt-6">
+              <button type="submit" class="btn bg-red-500 hover:bg-red-500k-red text-white border-none px-12 py-3 text-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+                Crear Mi Cuenta
+              </button>
+            </div>
+
+            <!-- Link a Login -->
+            <div class="text-center pt-4 border-t">
+              <p class="text-gray-600">
+                ¿Ya tienes una cuenta? 
+                <a href="/login" class="text-red-500 font-medium hover:underline">Iniciar Sesión</a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Beneficios -->
+      <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-xl font-bold text-red-500 mb-4">¿Por qué registrarte en Plaza Vea?</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="text-center">
+            <div class="bg-red-500 bg-opacity-10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+              <svg class="w-8 h-8 text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold">Ofertas Exclusivas</h4>
+            <p class="text-sm text-gray-600">Accede a descuentos especiales solo para miembros</p>
+          </div>
+          <div class="text-center">
+            <div class="bg-red-500 bg-opacity-10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+              <svg class="w-8 h-8 text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold">Delivery Rápido</h4>
+            <p class="text-sm text-gray-600">Recibe tus productos en tiempo récord</p>
+          </div>
+          <div class="text-center">
+            <div class="bg-red-500 bg-opacity-10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+              <svg class="w-8 h-8 text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold">Lista de Deseos</h4>
+            <p class="text-sm text-gray-600">Guarda tus productos favoritos para después</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</Layout>
+
+<script is:inline>
+    // Estado del formulario
+    let isSubmitting = false;
+
+    // Mostrar notificaciones
+    function showNotification(message, type = 'info') {
+      // Crear elemento de notificación
+      const notification = document.createElement('div');
+      notification.className = `alert ${type === 'error' ? 'alert-error' : type === 'success' ? 'alert-success' : 'alert-info'} fixed top-4 right-4 z-50 max-w-md shadow-lg`;
+      notification.innerHTML = `
+        <div class="flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            ${type === 'error' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>' : 
+              type === 'success' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>' :
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>'}
+          </svg>
+          <span>${message}</span>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Remover después de 5 segundos
+      setTimeout(() => {
+        notification.remove();
+      }, 5000);
+    }
+
+    // Validar email en tiempo real
+    const emailInput = document.querySelector('input[name="email"]');
+    let emailTimeout;
+    
+    emailInput.addEventListener('input', function() {
+      clearTimeout(emailTimeout);
+      const email = this.value.trim();
+      
+      if (email && email.includes('@')) {
+        emailTimeout = setTimeout(async () => {
+          try {
+            const response = await fetch(`/api/usuario/registrar?email=${encodeURIComponent(email)}`);
+            const data = await response.json();
+            
+            if (data.success && data.exists) {
+              this.setCustomValidity('Este email ya está registrado');
+              this.classList.add('input-error');
+            } else {
+              this.setCustomValidity('');
+              this.classList.remove('input-error');
+            }
+          } catch (error) {
+            console.error('Error al verificar email:', error);
+          }
+        }, 500);
+      }
+    });
+
+    // Validación del formulario
+    document.getElementById('registroForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if (isSubmitting) {
+        return;
+      }
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
+      
+      // Validar contraseñas
+      if (data.password !== data.confirmPassword) {
+        showNotification('Las contraseñas no coinciden', 'error');
+        return;
+      }
+      
+      // Validar términos y condiciones
+      if (!data.aceptaTerminos) {
+        showNotification('Debes aceptar los términos y condiciones', 'error');
+        return;
+      }
+      
+      // Preparar datos para envío
+      const registroData = {
+        nombre: data.nombre,
+        apellidos: data.apellidos,
+        email: data.email,
+        password: data.password,
+        telefono: data.telefono || null,
+        fechaNacimiento: data.fechaNacimiento || null,
+        genero: data.genero || null,
+        tipoDocumento: data.tipoDocumento || 'DNI',
+        numeroDocumento: data.numeroDocumento || null,
+        departamento: data.departamento || null,
+        provincia: data.provincia || null,
+        distrito: data.distrito || null,
+        direccion: data.direccion || null,
+        referencia: data.referencia || null,
+        codigoPostal: data.codigoPostal || null,
+        aceptaMarketing: data.aceptaMarketing === 'on',
+        aceptaTerminos: true
+      };
+      
+      // Mostrar estado de carga
+      const submitButton = this.querySelector('button[type="submit"]');
+      const originalText = submitButton.innerHTML;
+      submitButton.innerHTML = `
+        <span class="loading loading-spinner loading-sm mr-2"></span>
+        Creando cuenta...
+      `;
+      submitButton.disabled = true;
+      isSubmitting = true;
+      
+      try {
+        // Enviar datos al servidor
+        const response = await fetch('/api/usuario/registrar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(registroData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showNotification('¡Cuenta creada exitosamente! Redirigiendo...', 'success');
+          
+          // Limpiar formulario
+          this.reset();
+          
+          // Redirigir después de 2 segundos
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+          
+        } else {
+          showNotification(result.message || 'Error al crear la cuenta', 'error');
+        }
+        
+      } catch (error) {
+        console.error('Error al registrar usuario:', error);
+        showNotification('Error de conexión. Por favor, inténtalo más tarde.', 'error');
+      } finally {
+        // Restaurar botón
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
+        isSubmitting = false;
+      }
+    });
+
+    // Validación en tiempo real de contraseñas
+    const passwordInput = document.querySelector('input[name="password"]');
+    const confirmPasswordInput = document.querySelector('input[name="confirmPassword"]');
+    
+    function validatePasswords() {
+      if (confirmPasswordInput.value && passwordInput.value !== confirmPasswordInput.value) {
+        confirmPasswordInput.setCustomValidity('Las contraseñas no coinciden');
+        confirmPasswordInput.classList.add('input-error');
+      } else {
+        confirmPasswordInput.setCustomValidity('');
+        confirmPasswordInput.classList.remove('input-error');
+      }
+    }
+    
+    passwordInput.addEventListener('input', validatePasswords);
+    confirmPasswordInput.addEventListener('input', validatePasswords);
+
+    // Validación de fuerza de contraseña
+    passwordInput.addEventListener('input', function() {
+      const password = this.value;
+      const strengthIndicator = document.getElementById('password-strength');
+      
+      if (!strengthIndicator) {
+        const indicator = document.createElement('div');
+        indicator.id = 'password-strength';
+        indicator.className = 'mt-2 text-sm';
+        this.parentNode.appendChild(indicator);
+      }
+      
+      const strength = checkPasswordStrength(password);
+      const indicator = document.getElementById('password-strength');
+      
+      if (password.length > 0) {
+        indicator.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <div class="flex-1 bg-gray-200 rounded-full h-2">
+              <div class="h-2 rounded-full transition-all duration-300 ${strength.color}" style="width: ${strength.percentage}%"></div>
+            </div>
+            <span class="text-xs ${strength.textColor}">${strength.text}</span>
+          </div>
+        `;
+      } else {
+        indicator.innerHTML = '';
+      }
+    });
+    
+    function checkPasswordStrength(password) {
+      let score = 0;
+      
+      if (password.length >= 8) score += 1;
+      if (password.length >= 12) score += 1;
+      if (/[a-z]/.test(password)) score += 1;
+      if (/[A-Z]/.test(password)) score += 1;
+      if (/[0-9]/.test(password)) score += 1;
+      if (/[^A-Za-z0-9]/.test(password)) score += 1;
+      
+      if (score < 3) {
+        return { percentage: 25, color: 'bg-red-500', textColor: 'text-red-500', text: 'Débil' };
+      } else if (score < 5) {
+        return { percentage: 50, color: 'bg-yellow-500', textColor: 'text-yellow-500', text: 'Media' };
+      } else if (score < 6) {
+        return { percentage: 75, color: 'bg-blue-500', textColor: 'text-blue-500', text: 'Fuerte' };
+      } else {
+        return { percentage: 100, color: 'bg-green-500', textColor: 'text-green-500', text: 'Muy fuerte' };
+      }
+    }
+
+    // Formatear teléfono automáticamente
+    const phoneInput = document.querySelector('input[name="telefono"]');
+    phoneInput.addEventListener('input', function() {
+      let value = this.value.replace(/\D/g, '');
+      if (value.length > 9) value = value.slice(0, 9);
+      
+      if (value.length >= 3) {
+        value = value.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+      }
+      
+      this.value = value;
+    });
+
+    // Formatear DNI automáticamente
+    const dniInput = document.querySelector('input[name="numeroDocumento"]');
+    dniInput.addEventListener('input', function() {
+      const tipoDoc = document.querySelector('select[name="tipoDocumento"]').value;
+      
+      if (tipoDoc === 'DNI') {
+        let value = this.value.replace(/\D/g, '');
+        if (value.length > 8) value = value.slice(0, 8);
+        this.value = value;
+      }
+    });
+  </script>

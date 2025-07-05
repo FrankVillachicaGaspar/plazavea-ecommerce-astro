@@ -3,10 +3,16 @@ import { eq, sql } from "drizzle-orm";
 import { db } from "../db/db";
 import * as schema from "../db/schema";
 
-const carrito = await db
-    .select({ count: sql<number>`COUNT(*)` })
-    .from(schema.carrito)
-    .where(eq(schema.carrito.usuarioId, 1));
+const usuarioId = Astro.locals.user?.userId;
+
+let carrito = undefined;
+
+if (usuarioId) {
+    carrito = await db
+        .select({ count: sql<number>`COUNT(*)` })
+        .from(schema.carrito)
+        .where(eq(schema.carrito.usuarioId, usuarioId));
+}
 ---
 
 <div class="dropdown dropdown-end">
@@ -27,7 +33,7 @@ const carrito = await db
                 ></path>
             </svg>
             <span id="carrito-badge" class="badge badge-sm indicator-item"
-                >{carrito[0].count}</span
+                >{carrito ? carrito[0].count : 0}</span
             >
         </div>
     </a>

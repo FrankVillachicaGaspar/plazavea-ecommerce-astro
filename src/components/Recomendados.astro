@@ -2,6 +2,7 @@
 import { db } from "../db/db";
 import * as schema from "../db/schema";
 import { eq, sql } from "drizzle-orm";
+import ProductCard from "../components/react/ProductCard";
 
 // Traer productos recomendados
 const recomendados = await db
@@ -19,7 +20,7 @@ const recomendados = await db
         eq(schema.productos.id, schema.imagenes.productoId)
     )
     .orderBy(sql`RANDOM()`)
-    .limit(6);
+    .limit(10);
 ---
 
 {
@@ -28,35 +29,77 @@ const recomendados = await db
             <h2 class="text-2xl font-bold text-gray-800 mb-4">
                 También te puede interesar
             </h2>
-            <div class="carousel carousel-center space-x-4 p-4 w-full flex justify-between">
-                {recomendados.map(({ producto, imagen }) => (
-                    <div class="carousel-item min-w-[220px]">
-                        <a
-                            href={`/products/${producto.id}`}
-                            class="block w-[220px]"
-                        >
-                            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                                <img
-                                    src={
-                                        imagen?.url ??
-                                        "https://via.placeholder.com/300x200"
-                                    }
-                                    alt={producto.nombre}
-                                    class="w-full h-40 object-cover"
-                                />
-                                <div class="p-3">
-                                    <h3 class="text-sm font-semibold text-gray-800 truncate">
-                                        {producto.nombre}
-                                    </h3>
-                                    <p class="text-indigo-600 font-bold text-sm mt-1">
-                                        S/. {producto.precio}
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                ))}
+            
+            <!-- Swiper -->
+            <div class="swiper recomendados-swiper">
+                <div class="swiper-wrapper">
+                    {recomendados.map(({ producto, imagen }) => (
+                        <div class="swiper-slide">
+                            <ProductCard product={producto} image={imagen!} />
+                        </div>
+                    ))}
+                </div>
+                
+                <!-- Navegación -->
+                <div class="swiper-button-next bg-red-500! text-white!"></div>
+                <div class="swiper-button-prev bg-red-500! text-white!"></div>
+                
+                <!-- Paginación -->
+                <div class="swiper-pagination text-red-500!"></div>
             </div>
         </section>
     )
 }
+<script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js"></script>
+
+<script is:inline type="module">
+
+    var swiper = new Swiper('.recomendados-swiper', {
+        // Configuración básica
+        slidesPerView: 5,
+        spaceBetween: 16,
+        
+        // Navegación
+        navigation: {
+            nextEl: '.recomendados-swiper .swiper-button-next',
+            prevEl: '.recomendados-swiper .swiper-button-prev',
+        },
+        
+        // Paginación
+        pagination: {
+            el: '.recomendados-swiper .swiper-pagination',
+            clickable: true,
+        },
+    });
+</script>
+
+<!-- Estilos personalizados opcionales -->
+<style is:inline>
+    .recomendados-swiper {
+        padding: 20px 0 40px 0;
+    }
+    
+    .recomendados-swiper .swiper-button-next,
+    .recomendados-swiper .swiper-button-prev {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .recomendados-swiper .swiper-button-next:after,
+    .recomendados-swiper .swiper-button-prev:after {
+        font-size: 16px;
+    }
+        
+    .swipper-pagination .swiper-pagination-bullet-active {
+        background: : none;
+        opacity: 1;
+    }
+
+    .swiper-pagination {
+        --swiper-pagination-bullet-size: 10px;
+        --swiper-pagination-bullet-inactive-color: #374151;
+        --swiper-pagination-color: var(--color-red-500) !important;
+    }
+</style>

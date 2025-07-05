@@ -1,26 +1,72 @@
 import type { Product, Image } from "../../db/schema";
+import { priceFormatterToPE } from "../../utils/priceFormatter";
 
 interface Props {
-  product: Product;
-  image?: Image;
+    product: Product;
+    image?: Image;
 }
 
 export default function ProductCard({ product, image }: Props) {
-  return (
-    <a href={`/products/${product.id}`} className="bg-white rounded-lg shadow-md overflow-hidden w-[280px]">
-      <img
-        src={image?.url || "https://via.placeholder.com/300x200"}
-        alt={product.nombre}
-        className="w-full h-48 object-cover"
-      />
-      <div className="p-4">
-        <h2 className="text-lg font-semibold text-gray-800">{product.nombre}</h2>
-        <p className="text-sm text-gray-600 mt-1">{product.descripcion}</p>
-        <p className="text-indigo-600 font-bold mt-2">S/. {product.precio}</p>
-        <button className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition">
-          Agregar al carrito
-        </button>
-      </div>
-    </a>
-  );
+    return (
+        <div className="card card-compact bg-base-100 w-full shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-w-[278px] max-w-[300px]">
+            <figure className="relative overflow-hidden">
+                <img
+                    src={image?.url || "https://via.placeholder.com/300x200"}
+                    alt={product.nombre}
+                    className="w-full h-56 object-cover transition-transform duration-300 hover:scale-105"
+                />
+            </figure>
+
+            <div className="card-body">
+                <h2 className="card-title text-lg font-bold text-base-content">
+                    {product.nombre}
+                    <div className="badge badge-secondary badge-sm">Nuevo</div>
+                </h2>
+
+                <p className="text-base-content/70 text-sm line-clamp-1 mb-2">
+                    {product.descripcion}
+                </p>
+
+                {/* Precio */}
+                <div className="flex items-center gap-2 mb-4">
+                    <span className="text-2xl font-bold text-error text-end w-full">
+                        {priceFormatterToPE.format(product.precio)}
+                    </span>
+                </div>
+
+                <div className="card-actions justify-between items-center">
+                    <a
+                        href={`/products/${product.id}`}
+                        className="btn btn-ghost btn-sm"
+                    >
+                        Ver detalles
+                    </a>
+                    <button className="btn btn-error btn-sm text-white hover:btn-error/90 transition-colors">
+                        <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.707 2.707A1 1 0 005 16h16M7 13v4a2 2 0 002 2h6a2 2 0 002-2v-4m-8 2h4"
+                            />
+                        </svg>
+                        Agregar
+                    </button>
+                </div>
+            </div>
+
+            {/* Indicador de stock */}
+            <div className="absolute top-3 left-3">
+                <div className="badge badge-success badge-sm text-white">
+                    <div className="w-2 h-2 bg-green-300 rounded-full mr-1 animate-pulse"></div>
+                    En stock
+                </div>
+            </div>
+        </div>
+    );
 }

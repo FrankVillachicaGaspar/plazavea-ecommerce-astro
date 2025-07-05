@@ -3,9 +3,10 @@ import { db } from "../../../db/db";
 import * as schema from "../../../db/schema";
 import { and, eq } from "drizzle-orm";
 
-export const DELETE: APIRoute = async ({ params }) => {
+export const DELETE: APIRoute = async ({ params, request }) => {
     const productId = Number(params.id);
-    const usuarioId = 1;
+    const body = await request.json();
+    const { userId } = body;
 
     if (isNaN(productId))
         return new Response(JSON.stringify({ mesage: "Id inválido" }), {
@@ -16,7 +17,7 @@ export const DELETE: APIRoute = async ({ params }) => {
         .delete(schema.carrito)
         .where(
             and(
-                eq(schema.carrito.usuarioId, usuarioId),
+                eq(schema.carrito.usuarioId, userId),
                 eq(schema.carrito.productoId, productId)
             )
         );

@@ -5,11 +5,11 @@ import type { APIRoute } from "astro";
 
 export const POST: APIRoute = async ({ params, request }) => {
     const body = await request.json();
-    const { productoId } = body;
+    const { productoId, usuarioId } = body;
 
     const carritoExistente = await db.query.carrito.findFirst({
         where: (t, { and, eq }) =>
-            and(eq(t.usuarioId, 1), eq(t.productoId, productoId)),
+            and(eq(t.usuarioId, usuarioId), eq(t.productoId, productoId)),
     });
 
     if (carritoExistente && carritoExistente.cantidad > 1) {
@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ params, request }) => {
             .set({ cantidad: carritoExistente.cantidad - 1 })
             .where(
                 and(
-                    eq(schema.carrito.usuarioId, 1),
+                    eq(schema.carrito.usuarioId, usuarioId),
                     eq(schema.carrito.productoId, productoId)
                 )
             );
@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ params, request }) => {
             .delete(schema.carrito)
             .where(
                 and(
-                    eq(schema.carrito.usuarioId, 1),
+                    eq(schema.carrito.usuarioId, usuarioId),
                     eq(schema.carrito.productoId, productoId)
                 )
             );

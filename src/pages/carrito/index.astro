@@ -5,7 +5,7 @@ import { db } from "../../db/db";
 import * as schema from "../../db/schema";
 import { eq, sql } from "drizzle-orm";
 
-const usuarioId = 1;
+const usuarioId = Astro.locals.user?.userId;
 
 const items = await db
     .select({
@@ -20,7 +20,7 @@ const items = await db
         schema.productos,
         eq(schema.productos.id, schema.carrito.productoId)
     )
-    .where(eq(schema.carrito.usuarioId, usuarioId));
+    .where(eq(schema.carrito.usuarioId, usuarioId!));
 
 const total = items.reduce((sum, item) => {
     return sum + (item.precio ?? 0) * item.cantidad;
@@ -39,8 +39,8 @@ const totalFinal = subtotal + envio + impuestos;
             <div class="mb-8">
                 <div class="breadcrumbs text-sm">
                     <ul>
-                        <li><a href="/" class="text-primary">Inicio</a></li>
-                        <li><a href="/productos" class="text-primary">Productos</a></li>
+                        <li><a href="/" class="text-red-500">Inicio</a></li>
+                        <li><a href="/productos" class="text-red-500">Productos</a></li>
                         <li>Carrito</li>
                     </ul>
                 </div>
@@ -88,6 +88,7 @@ const totalFinal = subtotal + envio + impuestos;
                                                         <button 
                                                             class="btn btn-sm btn-circle btn-outline btn-error decrease-btn"
                                                             data-product-id={item.productoId}
+                                                            data-user-id={usuarioId}
                                                             disabled={item.cantidad <= 1}
                                                         >
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,6 +99,7 @@ const totalFinal = subtotal + envio + impuestos;
                                                         <button 
                                                             class="btn btn-sm btn-circle btn-outline btn-success increase-btn"
                                                             data-product-id={item.productoId}
+                                                            data-user-id={usuarioId}
                                                         >
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -174,7 +176,7 @@ const totalFinal = subtotal + envio + impuestos;
                                         </svg>
                                         Proceder al pago
                                     </a>
-                                    <a href="/productos" class="btn btn-outline btn-block">
+                                    <a href="/products" class="btn btn-outline btn-block">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
                                         </svg>
@@ -220,7 +222,7 @@ const totalFinal = subtotal + envio + impuestos;
                             <h2 class="card-title text-xl mb-2">Tu carrito está vacío</h2>
                             <p class="text-base-content/70 mb-6">¡Agrega algunos productos increíbles para comenzar!</p>
                             <div class="card-actions">
-                                <a href="/productos" class="btn btn-error">
+                                <a href="/products" class="btn btn-error text-white">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                     </svg>
@@ -309,10 +311,11 @@ const totalFinal = subtotal + envio + impuestos;
     document.querySelectorAll('.increase-btn').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productId = this.dataset.productId;
+            const userId = this.dataset.userId
             try {
                 await makeRequest('/api/carrito', {
                     method: 'POST',
-                    body: JSON.stringify({ productoId: parseInt(productId) }),
+                    body: JSON.stringify({ productoId: parseInt(productId), userId: parseInt(userId) }),
                 });
                 showToast('Cantidad aumentada correctamente');
                 // Recargar la página para mostrar cambios
@@ -327,10 +330,11 @@ const totalFinal = subtotal + envio + impuestos;
     document.querySelectorAll('.decrease-btn').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productId = this.dataset.productId;
+            const userId = this.dataset.userId
             try {
                 await makeRequest('/api/carrito/disminuir', {
                     method: 'POST',
-                    body: JSON.stringify({ productoId: parseInt(productId) }),
+                    body: JSON.stringify({ productoId: parseInt(productId), usuarioId: parseInt(userId) }),
                 });
                 showToast('Cantidad disminuida correctamente');
                 // Recargar la página para mostrar cambios
@@ -345,12 +349,14 @@ const totalFinal = subtotal + envio + impuestos;
     document.querySelectorAll('.remove-btn').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productId = this.dataset.productId;
+            const userId = this.dataset.userId
             
             // Confirmar eliminación
             if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
                 try {
                     await makeRequest(`/api/carrito/${productId}`, {
                         method: 'DELETE',
+                    body: JSON.stringify({ userId: parseInt(userId) }),
                     });
                     showToast('Producto eliminado del carrito');
                     // Recargar la página para mostrar cambios
@@ -371,7 +377,7 @@ const totalFinal = subtotal + envio + impuestos;
                 const products = document.querySelectorAll('.remove-btn');
                 for (const btn of products) {
                     const productId = btn.dataset.productId;
-                    await makeRequest(`/carrito/${productId}`, {
+                    await makeRequest(`/api/carrito/limpiar/1`, {
                         method: 'DELETE',
                     });
                 }

@@ -1,6 +1,8 @@
 ---
 import CarritoNavbar from "./CarritoNavbar.astro";
 import SearchInputNavbar from "./SearchInputNavbar.astro";
+
+const isAuthenticated = Astro.locals.isAuthenticated;
 ---
 
 <div class="container mx-auto">
@@ -11,27 +13,59 @@ import SearchInputNavbar from "./SearchInputNavbar.astro";
         <SearchInputNavbar />
         <div class="flex gap-4">
             <CarritoNavbar />
-            <div class="dropdown dropdown-end">
-                <div
-                    tabindex="0"
-                    role="button"
-                    class="btn btn-ghost btn-circle avatar flex group"
-                >
-                    <i
-                        class="fa fa-user m-auto text-xl text-white group-hover:text-black"
-                    ></i>
-                </div>
-                <ul
-                    tabindex="0"
-                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-                >
-                    <li>
-                        <a class="justify-between"> Profile </a>
-                    </li>
-                    <li><a>Settings</a></li>
-                    <li><a>Logout</a></li>
-                </ul>
-            </div>
+            {
+                isAuthenticated ? (
+                    <div class="dropdown dropdown-end">
+                        <div
+                            tabindex="0"
+                            role="button"
+                            class="btn btn-ghost btn-circle avatar flex group"
+                        >
+                            <i class="fa fa-user m-auto text-xl text-white group-hover:text-black" />
+                        </div>
+                        <ul
+                            tabindex="0"
+                            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                        >
+                            <li>
+                                <a class="justify-between"> Profile </a>
+                            </li>
+                            <li>
+                                <a>Settings</a>
+                            </li>
+                            <li>
+                                <button
+                                    id="btnLogout"
+                                    class="btn btn-error btn-outline"
+                                >
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                ) : (
+                    <div class="flex ">
+                        <a href="/login" class="btn btn-link text-white">
+                            Iniciar sesión
+                        </a>
+                        <a href="/registro" class="btn btn-link text-white">
+                            Registrarse
+                        </a>
+                    </div>
+                )
+            }
         </div>
     </div>
 </div>
+
+<script is:inline>
+    const btnLogout = document.getElementById("btnLogout");
+
+    btnLogout.addEventListener("click", () => {
+        fetch("/api/logout", {
+            method: 'POST'
+        })
+            .then((_) => (window.location = "/"))
+            .catch((_) => {});
+    });
+</script>

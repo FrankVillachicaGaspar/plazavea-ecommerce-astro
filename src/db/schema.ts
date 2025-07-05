@@ -22,10 +22,31 @@ export const banners = sqliteTable("banners", {
 export const usuarios = sqliteTable("usuarios", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   nombre: text("nombre").notNull(),
+  apellidos: text("apellidos").notNull(),
   email: text("email").unique().notNull(),
   password: text("password").notNull(),
+  telefono: text("telefono"),
+  fechaNacimiento: text("fecha_nacimiento"),
+  genero: text("genero"), // 'M', 'F', 'Otro'
+  tipoDocumento: text("tipo_documento").default("DNI"), // 'DNI', 'CE', 'Pasaporte'
+  numeroDocumento: text("numero_documento"),
+  // Dirección
+  departamento: text("departamento"),
+  provincia: text("provincia"),
+  distrito: text("distrito"),
+  direccion: text("direccion"),
+  referencia: text("referencia"),
+  codigoPostal: text("codigo_postal"),
+  // Configuración
+  aceptaMarketing: integer("acepta_marketing", { mode: "boolean" }).default(false),
+  aceptaTerminos: integer("acepta_terminos", { mode: "boolean" }).notNull().default(true),
+  // Metadata
   fechaRegistro: text("fecha_registro").default("CURRENT_TIMESTAMP"),
+  ultimoAcceso: text("ultimo_acceso"),
+  activo: integer("activo", { mode: "boolean" }).default(true),
 });
+
+export type User = typeof usuarios.$inferSelect;
 
 // Categorías
 export const categorias = sqliteTable("categorias", {
@@ -84,6 +105,8 @@ export const carrito = sqliteTable(
   },
   (t) => [primaryKey({ columns: [t.usuarioId, t.productoId] })]
 );
+
+export type Carrito = typeof carrito.$inferSelect;
 
 // Tabla de pagos
 export const pagos = sqliteTable("pagos", {

@@ -31,7 +31,7 @@ export default function SearchBar({ productos }: Props) {
             />
 
             {query && results.length > 0 && (
-                <ul className="flex overflow-x-auto gap-4 absolute z-10 bg-white border border-gray-200 rounded-md mt-1 w-4xl shadow-lg -left-[200px] p-5">
+                <ul className="flex overflow-x-auto gap-4 absolute z-10 bg-white border-2 border-red-600 rounded-md mt-1 w-4xl shadow-2xl -left-[200px] p-5">
                     {results.map((p) => (
                         <li key={p.producto.id} className="w-fit">
                             <a

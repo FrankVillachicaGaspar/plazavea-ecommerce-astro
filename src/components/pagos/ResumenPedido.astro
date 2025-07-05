@@ -4,6 +4,8 @@ import { db } from "../../db/db";
 import * as schema from "../../db/schema";
 import { priceFormatterToPE } from "../../utils/priceFormatter";
 
+const usuarioId = Astro.locals.user?.userId;
+
 const items = await db
     .select({
         productoId: schema.carrito.productoId,
@@ -17,7 +19,7 @@ const items = await db
         schema.productos,
         eq(schema.productos.id, schema.carrito.productoId)
     )
-    .where(eq(schema.carrito.usuarioId, 1));
+    .where(eq(schema.carrito.usuarioId, usuarioId!));
 
 console.log(items);
 

@@ -1,5 +1,5 @@
 ---
-import { asc } from "drizzle-orm";
+import CardProducto from "./react/ProductCard";
 import { db } from "../db/db";
 import { type Product } from "../db/schema";
 
@@ -14,18 +14,4 @@ const image = await db.query.imagenes.findFirst({
 });
 ---
 
-<div class="bg-white rounded-lg shadow-md overflow-hidden">
-    <img src={image?.url} alt="Producto 1" class="w-full h-48 object-cover" />
-    <div class="p-4">
-        <h2 class="text-lg font-semibold text-gray-800">{product.nombre}</h2>
-        <p class="text-sm text-gray-600 mt-1">
-            {product.descripcion}
-        </p>
-        <p class="text-indigo-600 font-bold mt-2">S/. {product.precio}</p>
-        <button
-            class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition"
-        >
-            Agregar al carrito
-        </button>
-    </div>
-</div>
+<CardProducto client:load product={product} image={image} />

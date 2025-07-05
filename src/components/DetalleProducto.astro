@@ -1,0 +1,269 @@
+---
+import type { Image, Product, Carrito } from "../db/schema";
+import { priceFormatterToPE } from "../utils/priceFormatter";
+
+export interface Props {
+    isAuthenticated: boolean;
+    carrito?: Carrito;
+    producto: Product;
+    imagenes: Image[];
+    userId: number | undefined;
+}
+
+const { producto, imagenes, carrito, isAuthenticated, userId } = Astro.props;
+---
+
+<div class="">
+    <!-- Breadcrumb -->
+    <div class="bg-base-100 border-b border-gray-300">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="breadcrumbs text-sm">
+                <ul>
+                    <li>
+                        <a href="/" class="text-red-500 hover:underline"
+                            >Inicio</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="/productos"
+                            class="text-red-500 hover:underline">Productos</a
+                        >
+                    </li>
+                    <li class="text-base-content">{producto?.nombre}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Sección de imágenes -->
+            <div class="w-full">
+                <!-- Carrusel principal -->
+                <div class="card bg-base-100 shadow-xl mb-4">
+                    <div class="card-body p-0">
+                        <div class="carousel w-full h-96 rounded-lg">
+                            {
+                                imagenes.length > 0 ? (
+                                    imagenes.map((img, index) => (
+                                        <div
+                                            id={`slide${index}`}
+                                            class="carousel-item relative w-full"
+                                        >
+                                            <img
+                                                src={img.url}
+                                                class="w-full h-full object-cover"
+                                                alt={`${producto?.nombre} - Imagen ${index + 1}`}
+                                            />
+                                            {imagenes.length > 1 && (
+                                                <>
+                                                    <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                                                        <a
+                                                            href={`#slide${index === 0 ? imagenes.length - 1 : index - 1}`}
+                                                            class="btn btn-circle btn-sm bg-black bg-opacity-50 border-none text-white hover:bg-opacity-75"
+                                                        >
+                                                            ❮
+                                                        </a>
+                                                        <a
+                                                            href={`#slide${index === imagenes.length - 1 ? 0 : index + 1}`}
+                                                            class="btn btn-circle btn-sm bg-black bg-opacity-50 border-none text-white hover:bg-opacity-75"
+                                                        >
+                                                            ❯
+                                                        </a>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div class="carousel-item w-full">
+                                        <img
+                                            src="https://via.placeholder.com/600x400?text=Sin+Imagen"
+                                            class="w-full h-full object-cover"
+                                            alt="Imagen no disponible"
+                                        />
+                                    </div>
+                                )
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Miniaturas -->
+                {
+                    imagenes.length > 1 && (
+                        <div class="flex justify-center gap-2 flex-wrap">
+                            {imagenes.map((img, index) => (
+                                <a
+                                    href={`#slide${index}`}
+                                    class="btn btn-square btn-sm hover:btn-primary"
+                                >
+                                    <img
+                                        src={img.url}
+                                        class="w-full h-full object-cover rounded"
+                                        alt={`Miniatura ${index + 1}`}
+                                    />
+                                </a>
+                            ))}
+                        </div>
+                    )
+                }
+            </div>
+
+            <!-- Detalles del producto -->
+            <div class="space-y-6">
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <!-- Título y precio -->
+                        <h1
+                            class="card-title text-3xl font-bold text-base-content mb-4"
+                        >
+                            {producto?.nombre}
+                        </h1>
+
+                        <!-- Precio destacado -->
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="text-4xl font-bold text-red-500">
+                                {priceFormatterToPE.format(producto?.precio)}
+                            </span>
+                        </div>
+
+                        <!-- Estado de stock -->
+                        <div class="flex items-center gap-3 mb-4">
+                            {
+                                producto?.stock && producto?.stock > 0 ? (
+                                    <>
+                                        <div class="badge badge-success gap-2">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                class="inline-block w-4 h-4 stroke-current"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                />
+                                            </svg>
+                                            Disponible
+                                        </div>
+                                        <span class="text-sm text-base-content opacity-70">
+                                            {producto?.stock} unidades
+                                            disponibles
+                                        </span>
+                                    </>
+                                ) : (
+                                    <div class="badge badge-error gap-2">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            class="inline-block w-4 h-4 stroke-current"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
+                                        Agotado
+                                    </div>
+                                )
+                            }
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-2">
+                                Descripción
+                            </h3>
+                            <p
+                                class="text-base-content opacity-80 leading-relaxed"
+                            >
+                                {producto?.descripcion}
+                            </p>
+                        </div>
+
+                        <!-- Botón de agregar al carrito -->
+                        <div class="card-actions justify-end" id="buttonAgrogarCarrito">
+                            {
+                                carrito === undefined ? (
+                                    <button
+                                        class="btn bg-red-500 text-white btn-lg w-full gap-2 disabled:text-black"
+                                        id="carritoBtnLoad" hidden
+                                    >
+                                        <i class="fa fa-spinner animate-spin"></i>
+                                    </button>
+                                    <button
+                                        class="btn bg-red-500 text-white btn-lg w-full gap-2 disabled:text-black"
+                                        disabled={producto?.stock === 0}
+                                        onclick={`agregarAlCarrito(${producto?.id}, ${isAuthenticated}, ${userId})`}
+                                        id="carritoBtn"
+                                    >
+                                        <i class="fa fa-shopping-cart"></i>
+                                        {producto?.stock === 0
+                                            ? "Producto agotado"
+                                            : "Agregar al carrito"}
+                                    </button>
+                                ) : (
+                                    <a
+                                        href="/carrito"
+                                        class="btn btn-danger btn-ghost border-red-500  btn-lg w-full gap-2"
+                                        id="carritoBtn"
+                                    >
+                                        <i class="fa fa-shopping-cart"></i>
+                                        Ir al carrito
+                                    </a>
+                                    <p class="text-gray-600 text-center text-xs">Tu producto ya se encuentra en el carrito</p>
+                                )
+                            }
+                        </div>
+
+                        <!-- Información adicional -->
+                        <div class="divider"></div>
+                        <div
+                            class="flex flex-wrap gap-2 text-sm text-base-content opacity-70"
+                        >
+                            <div class="badge badge-outline">
+                                ID: {producto?.id}
+                            </div>
+                            <div class="badge badge-outline">
+                                Garantía incluida
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style is:inline>
+    .carousel-item img {
+        transition: transform 0.3s ease;
+    }
+
+    .carousel-item:hover img {
+        transform: scale(1.05);
+    }
+
+    .btn-square img {
+        border-radius: 0.375rem;
+    }
+
+    .card {
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+</style>
