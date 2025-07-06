@@ -7,8 +7,6 @@ export const POST: APIRoute = async ({ params, request }) => {
     const body = await request.json();
     const { productoId, userId } = body;
 
-    console.log("Carrito/index.ts", productoId, userId)
-
     const carritoExistente = await db.query.carrito.findFirst({
         where: (t, { and, eq }) =>
             and(eq(t.usuarioId, userId), eq(t.productoId, productoId)),
