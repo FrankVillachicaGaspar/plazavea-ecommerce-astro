@@ -1,44 +1,61 @@
 ---
 import CarritoNavbar from "./CarritoNavbar.astro";
 import SearchInputNavbar from "./SearchInputNavbar.astro";
+import { LogOut, CircleUser, Package } from "lucide-astro";
 
 const isAuthenticated = Astro.locals.isAuthenticated;
 ---
 
 <div class="container mx-auto">
     <div class="navbar max-h-[70px]!">
-        <div class="flex-1">
-            <a href="/" class="text-3xl text-white"> plazavea </a>
-        </div>
+        <a href="/">
+            <img
+                src="https://plazavea.vteximg.com.br/arquivos/LogoPlazaVea.svg?v=638558150445000000"
+            />
+        </a>
         <SearchInputNavbar />
-        <div class="flex gap-4">
-            <CarritoNavbar />
+        <div class="flex gap-2">
+            <a href="/miscompras" class="text-white w-32 flex gap-1 items-center">
+                <Package />
+                Mis compras
+            </a>
             {
                 isAuthenticated ? (
-                    <div class="dropdown dropdown-end">
+                    <div class="dropdown">
                         <div
                             tabindex="0"
                             role="button"
-                            class="btn btn-ghost btn-circle avatar flex group"
+                            class="btn btn-primary w-32"
                         >
-                            <i class="fa fa-user m-auto text-xl text-white group-hover:text-black" />
+                            <CircleUser />
+                            <p>Mi cuenta</p>
                         </div>
                         <ul
                             tabindex="0"
-                            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                            class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-xl space-y-2 border border-red-600"
                         >
                             <li>
-                                <a class="justify-between"> Profile </a>
+                                <a href="/perfil" class="text-[16px]">
+                                    Perfil
+                                </a>
                             </li>
                             <li>
-                                <a>Settings</a>
+                                <a href="/miscompras" class="text-[16px]">
+                                    Mis compras
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/favoritos" class="text-[16px]">
+                                    Mis favoritos
+                                </a>
                             </li>
                             <li>
                                 <button
                                     id="btnLogout"
-                                    class="btn btn-error btn-outline"
+                                    class="btn btn-error btn-outline hover:text-white text-[16px]"
                                 >
-                                    Logout
+                                    <LogOut />
+                                    Cerrar sesión
                                 </button>
                             </li>
                         </ul>
@@ -54,6 +71,7 @@ const isAuthenticated = Astro.locals.isAuthenticated;
                     </div>
                 )
             }
+            <CarritoNavbar />
         </div>
     </div>
 </div>
@@ -63,7 +81,7 @@ const isAuthenticated = Astro.locals.isAuthenticated;
 
     btnLogout.addEventListener("click", () => {
         fetch("/api/logout", {
-            method: 'POST'
+            method: "POST",
         })
             .then((_) => (window.location = "/"))
             .catch((_) => {});

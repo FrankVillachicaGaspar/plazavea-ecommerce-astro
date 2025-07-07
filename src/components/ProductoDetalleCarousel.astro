@@ -1,0 +1,103 @@
+---
+import type { Image } from "../db/schema";
+
+interface Props {
+    imagenes: Image[];
+    productName: string;
+}
+
+const { imagenes, productName } = Astro.props;
+---
+
+<style>
+    .swiper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .swiper-slide {
+        background-size: cover;
+        background-position: center;
+    }
+
+    .imageSwiper {
+        height: 80%;
+        width: 100%;
+    }
+
+    .thumbnailSwiper {
+        height: 20%;
+        box-sizing: border-box;
+        padding: 10px 0;
+    }
+
+    .thumbnailSwiper .swiper-slide {
+        width: 10%;
+        height: 100%;
+        opacity: 0.4;
+    }
+
+    .thumbnailSwiper .swiper-slide-thumb-active {
+        opacity: 1;
+    }
+</style>
+
+<div class="w-full rounded-lg h-full">
+    <div class="swiper imageSwiper">
+        <div class="swiper-wrapper">
+            {
+                imagenes.map((img, index) => (
+                    <div class="swiper-slide h-full">
+                        <img
+                            class="object-scale-down! h-full max-h-96"
+                            src={img.url}
+                            alt={`${productName} - Imagen ${index + 1}`}
+                        />
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+
+    <div class="swiper thumbnailSwiper h-full">
+        <div class="swiper-wrapper justify-center">
+            {
+                imagenes.map((img, index) => (
+                    <div class="swiper-slide cursor-pointer aspect-square scale-3d border border-gray-300 max-w-[76px]">
+                        <img
+                            src={img.url}
+                            alt={`${productName} - Imagen ${index + 1}`}
+                        />
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</div>
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js"
+></script>
+
+<script is:inline type="module">
+    var swiper = new Swiper(".thumbnailSwiper", {
+        spaceBetween: 10,
+        slidesPerView: 4,
+        freeMode: true,
+        watchSlidesProgress: true,
+    });
+    var swiper2 = new Swiper(".imageSwiper", {
+        spaceBetween: 10,
+        thumbs: {
+            swiper: swiper,
+        },
+    });
+</script>

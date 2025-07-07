@@ -1,2 +1,9 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@plugin "daisyui/theme" {
+    name: "plazaveatheme";
+    default: true;
+    --color-primary: theme(--color-red-700);
+    --color-error: theme(--color-red-600);
+}

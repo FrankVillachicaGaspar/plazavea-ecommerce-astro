@@ -1,0 +1,60 @@
+---
+import { Clock10 } from "lucide-astro";
+interface Props {
+    title: string;
+    withTimer?: boolean;
+}
+
+const { title, withTimer }: Props = Astro.props;
+---
+
+<h2
+    class="text-2xl font-bold text-white mt-16 mb-5 bg-[#fa154f] rounded-t-lg p-3 flex gap-2 items-center"
+>
+    <img
+        alt="Plaza Vea Countdown Check"
+        class="w-10"
+        src="https://plazavea.vteximg.com.br/arquivos/PV-2025-A.webp?v=638803238526300000"
+    />
+    <span>
+        {title}
+    </span>
+    <div>
+        {
+            withTimer !== undefined && (
+                <div class="flex items-center gap-2 text-xl font-bold text-white bg-black rounded-lg px-4 py-1">
+                    <Clock10 />
+                    <div id="daily-offer-timer">Cargando oferta...</div>
+                </div>
+            )
+        }
+    </div>
+</h2>
+
+<script is:inline>
+    function startDailyCountdown() {
+        const timerEl = document.getElementById("daily-offer-timer");
+
+        function updateCountdown() {
+            const now = new Date();
+            const tomorrow = new Date();
+            tomorrow.setHours(24, 0, 0, 0); // próximo día a la medianoche
+
+            const diff = tomorrow.getTime() - now.getTime();
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            timerEl.textContent = `${hours
+                .toString()
+                .padStart(2, "0")}:${minutes
+                .toString()
+                .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    }
+
+    document.addEventListener("DOMContentLoaded", startDailyCountdown);
+</script>

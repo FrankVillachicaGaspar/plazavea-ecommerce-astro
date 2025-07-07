@@ -1,6 +1,7 @@
 ---
 import type { Image, Product, Carrito } from "../db/schema";
 import { priceFormatterToPE } from "../utils/priceFormatter";
+import ProductoDetalleCarousel from "./ProductoDetalleCarousel.astro";
 
 export interface Props {
     isAuthenticated: boolean;
@@ -20,14 +21,14 @@ const { producto, imagenes, carrito, isAuthenticated, userId } = Astro.props;
             <div class="breadcrumbs text-sm">
                 <ul>
                     <li>
-                        <a href="/" class="text-red-500 hover:underline"
+                        <a href="/" class="text-red-700 hover:underline"
                             >Inicio</a
                         >
                     </li>
                     <li>
                         <a
-                            href="/productos"
-                            class="text-red-500 hover:underline">Productos</a
+                            href="/products"
+                            class="text-red-700 hover:underline">Productos</a
                         >
                     </li>
                     <li class="text-base-content">{producto?.nombre}</li>
@@ -40,92 +41,37 @@ const { producto, imagenes, carrito, isAuthenticated, userId } = Astro.props;
     <div class="max-w-7xl mx-auto px-4 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <!-- Sección de imágenes -->
-            <div class="w-full">
-                <!-- Carrusel principal -->
-                <div class="card bg-base-100 shadow-xl mb-4">
-                    <div class="card-body p-0">
-                        <div class="carousel w-full h-96 rounded-lg">
-                            {
-                                imagenes.length > 0 ? (
-                                    imagenes.map((img, index) => (
-                                        <div
-                                            id={`slide${index}`}
-                                            class="carousel-item relative w-full"
-                                        >
-                                            <img
-                                                src={img.url}
-                                                class="w-full h-full object-cover"
-                                                alt={`${producto?.nombre} - Imagen ${index + 1}`}
-                                            />
-                                            {imagenes.length > 1 && (
-                                                <>
-                                                    <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                                                        <a
-                                                            href={`#slide${index === 0 ? imagenes.length - 1 : index - 1}`}
-                                                            class="btn btn-circle btn-sm bg-black bg-opacity-50 border-none text-white hover:bg-opacity-75"
-                                                        >
-                                                            ❮
-                                                        </a>
-                                                        <a
-                                                            href={`#slide${index === imagenes.length - 1 ? 0 : index + 1}`}
-                                                            class="btn btn-circle btn-sm bg-black bg-opacity-50 border-none text-white hover:bg-opacity-75"
-                                                        >
-                                                            ❯
-                                                        </a>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div class="carousel-item w-full">
-                                        <img
-                                            src="https://via.placeholder.com/600x400?text=Sin+Imagen"
-                                            class="w-full h-full object-cover"
-                                            alt="Imagen no disponible"
-                                        />
-                                    </div>
-                                )
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Miniaturas -->
+            <!-- Carrusel principal -->
+            <div class="w-full rounded-lg">
                 {
-                    imagenes.length > 1 && (
-                        <div class="flex justify-center gap-2 flex-wrap">
-                            {imagenes.map((img, index) => (
-                                <a
-                                    href={`#slide${index}`}
-                                    class="btn btn-square btn-sm hover:btn-primary"
-                                >
-                                    <img
-                                        src={img.url}
-                                        class="w-full h-full object-cover rounded"
-                                        alt={`Miniatura ${index + 1}`}
-                                    />
-                                </a>
-                            ))}
+                    imagenes.length > 0 ? (
+                        <ProductoDetalleCarousel imagenes={imagenes} productName={producto.nombre} />
+                    ) : (
+                        <div class=" w-full">
+                            <img
+                                src="https://via.placeholder.com/600x400?text=Sin+Imagen"
+                                class="w-full h-full object-cover"
+                                alt="Imagen no disponible"
+                            />
                         </div>
                     )
                 }
             </div>
 
             <!-- Detalles del producto -->
-            <div class="space-y-6">
+            <div class="space-y-6 max-w-2xl">
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
                         <!-- Título y precio -->
                         <h1
                             class="card-title text-3xl font-bold text-base-content mb-4"
                         >
-                            {producto?.nombre}
+                            {producto?.descripcion}
                         </h1>
 
                         <!-- Precio destacado -->
                         <div class="flex items-center gap-4 mb-4">
-                            <span class="text-4xl font-bold text-red-500">
+                            <span class="text-4xl font-bold text-red-700">
                                 {priceFormatterToPE.format(producto?.precio)}
                             </span>
                         </div>
@@ -185,7 +131,7 @@ const { producto, imagenes, carrito, isAuthenticated, userId } = Astro.props;
                             <p
                                 class="text-base-content opacity-80 leading-relaxed"
                             >
-                                {producto?.descripcion}
+                                {producto?.nombre}
                             </p>
                         </div>
 
@@ -194,13 +140,13 @@ const { producto, imagenes, carrito, isAuthenticated, userId } = Astro.props;
                             {
                                 carrito === undefined ? (
                                     <button
-                                        class="btn bg-red-500 text-white btn-lg w-full gap-2 disabled:text-black"
+                                        class="btn btn-error text-white btn-lg w-full gap-2 disabled:text-black"
                                         id="carritoBtnLoad" hidden
                                     >
                                         <i class="fa fa-spinner animate-spin"></i>
                                     </button>
                                     <button
-                                        class="btn bg-red-500 text-white btn-lg w-full gap-2 disabled:text-black"
+                                        class="btn btn-error text-white btn-lg w-full gap-2 disabled:text-black"
                                         disabled={producto?.stock === 0}
                                         onclick={`agregarAlCarrito(${producto?.id}, ${isAuthenticated}, ${userId})`}
                                         id="carritoBtn"
@@ -213,7 +159,7 @@ const { producto, imagenes, carrito, isAuthenticated, userId } = Astro.props;
                                 ) : (
                                     <a
                                         href="/carrito"
-                                        class="btn btn-danger btn-ghost border-red-500  btn-lg w-full gap-2"
+                                        class="btn btn-danger btn-ghost border-red-700  btn-lg w-full gap-2"
                                         id="carritoBtn"
                                     >
                                         <i class="fa fa-shopping-cart"></i>

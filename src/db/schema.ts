@@ -9,6 +9,14 @@ import {
   index,
 } from "drizzle-orm/sqlite-core";
 
+export const bannerType = sqliteTable("banner_type", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  descripcion: text("descripcion").notNull(), // Ejemplo: "Banner Principal", "Banner oferta", "Banner descuento"
+  tamanioSugerido: text("tamanio_sugerido").notNull(), // Ejemplo: "1200x300"
+});
+
+export type BannerType = typeof bannerType.$inferSelect;
+
 // Banners
 export const banners = sqliteTable("banners", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -16,7 +24,10 @@ export const banners = sqliteTable("banners", {
   altText: text("alt_text").notNull(),
   order: integer("order").notNull(),
   active: integer("active").default(1),
+  bannerType: integer("banner_type").references(() => bannerType.id),
 });
+
+export type Banner = typeof banners.$inferSelect;
 
 // Usuarios
 export const usuarios = sqliteTable("usuarios", {
@@ -79,6 +90,7 @@ export const imagenes = sqliteTable(
     id: integer("id").primaryKey({ autoIncrement: true }),
     productoId: integer("producto_id").references(() => productos.id),
     url: text("url").notNull(),
+    main: integer("main", { mode: "boolean" }).default(false),
   },
   (t) => [index("idx_producto_id").on(t.productoId)]
 );

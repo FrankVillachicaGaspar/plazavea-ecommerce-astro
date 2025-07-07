@@ -1,0 +1,24 @@
+---
+import { db } from "../db/db";
+import HomeSectionHeader from "./HomeSectionHeader.astro";
+
+const bannerOfertaLista = await db.query.banners.findMany({
+    where: (banner, { eq }) => eq(banner.bannerType, 2),
+    limit: 3,
+});
+---
+
+<div>
+    <HomeSectionHeader withTimer title="¡Solo por hoy!" />
+    <div class="grid grid-cols-3 gap-3">
+        {
+            bannerOfertaLista.map((bannerOferta) => (
+                <img
+                    class="w-auto h-auto"
+                    src={bannerOferta.url}
+                    alt={bannerOferta.altText}
+                />
+            ))
+        }
+    </div>
+</div>

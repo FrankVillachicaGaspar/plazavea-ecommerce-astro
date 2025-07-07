@@ -33,14 +33,14 @@ const totalFinal = subtotal + envio + impuestos;
 ---
 
 <Layout>
-    <div class="min-h-screen">
-        <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="min-h-screen my-4">
+        <div class="max-w-6xl mx-auto px-4">
             <!-- Header -->
             <div class="mb-8">
                 <div class="breadcrumbs text-sm">
                     <ul>
-                        <li><a href="/" class="text-red-500">Inicio</a></li>
-                        <li><a href="/productos" class="text-red-500">Productos</a></li>
+                        <li><a href="/" class="text-red-700">Inicio</a></li>
+                        <li><a href="/products" class="text-red-700">Productos</a></li>
                         <li>Carrito</li>
                     </ul>
                 </div>
@@ -86,7 +86,7 @@ const totalFinal = subtotal + envio + impuestos;
                                                     <span class="text-sm text-base-content/70">Cantidad:</span>
                                                     <div class="flex items-center gap-2">
                                                         <button 
-                                                            class="btn btn-sm btn-circle btn-outline btn-error decrease-btn"
+                                                            class="btn btn-sm btn-circle btn-outline bg-primary! decrease-btn"
                                                             data-product-id={item.productoId}
                                                             data-user-id={usuarioId}
                                                             disabled={item.cantidad <= 1}
@@ -110,12 +110,13 @@ const totalFinal = subtotal + envio + impuestos;
                                                 
                                                 <!-- Subtotal del producto -->
                                                 <div class="flex justify-between items-center">
-                                                    <span class="text-lg font-bold text-error">
+                                                    <span class="text-lg font-bold text-red-700">
                                                         s/. {((item.precio ?? 0) * item.cantidad).toFixed(2)}
                                                     </span>
                                                     <button 
-                                                        class="btn btn-sm btn-ghost btn-error remove-btn text-white"
+                                                        class="btn btn-sm btn-ghost bg-primary! remove-btn text-white"
                                                         data-product-id={item.productoId}
+                                                        data-user-id={usuarioId}
                                                     >
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -131,7 +132,7 @@ const totalFinal = subtotal + envio + impuestos;
                                 <!-- Botón para limpiar carrito -->
                                 <div class="divider"></div>
                                 <div class="text-center">
-                                    <button class="btn btn-outline btn-error btn-sm text-white!" id="clear-cart">
+                                    <button data-user-id={usuarioId} class="btn btn-outline bg-primary! btn-sm text-white!" id="clear-cart">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
@@ -164,13 +165,13 @@ const totalFinal = subtotal + envio + impuestos;
                                     <div class="divider my-2"></div>
                                     <div class="flex justify-between text-lg font-bold">
                                         <span>Total:</span>
-                                        <span class="text-error">s/. {totalFinal.toFixed(2)}</span>
+                                        <span class="text-red-700">s/. {totalFinal.toFixed(2)}</span>
                                     </div>
                                 </div>
                                 
                                 <!-- Botones de acción -->
                                 <div class="mt-6 space-y-3">
-                                    <a href="/pago" class="btn btn-error btn-block text-white">
+                                    <a href="/pago" class="btn btn-error! btn-block text-white">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                         </svg>
@@ -191,12 +192,6 @@ const totalFinal = subtotal + envio + impuestos;
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                         </svg>
                                         <span>Pago seguro</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-sm text-base-content/70">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-                                        </svg>
-                                        <span>Envío gratis en pedidos +s/. 100</span>
                                     </div>
                                     <div class="flex items-center gap-2 text-sm text-base-content/70">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,7 +217,7 @@ const totalFinal = subtotal + envio + impuestos;
                             <h2 class="card-title text-xl mb-2">Tu carrito está vacío</h2>
                             <p class="text-base-content/70 mb-6">¡Agrega algunos productos increíbles para comenzar!</p>
                             <div class="card-actions">
-                                <a href="/products" class="btn btn-error text-white">
+                                <a href="/products" class="btn btn-error! text-white">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                     </svg>
@@ -240,7 +235,7 @@ const totalFinal = subtotal + envio + impuestos;
     <div id="loading-modal" class="modal">
         <div class="modal-box">
             <div class="flex items-center justify-center">
-                <span class="loading loading-spinner loading-lg text-error"></span>
+                <span class="loading loading-spinner loading-lg text-red-700"></span>
                 <span class="ml-4">Actualizando carrito...</span>
             </div>
         </div>
@@ -376,8 +371,8 @@ const totalFinal = subtotal + envio + impuestos;
                 // Por ahora, eliminamos producto por producto
                 const products = document.querySelectorAll('.remove-btn');
                 for (const btn of products) {
-                    const productId = btn.dataset.productId;
-                    await makeRequest(`/api/carrito/limpiar/1`, {
+                    const userId = this.dataset.userId;
+                    await makeRequest(`/api/carrito/limpiar/${userId}`, {
                         method: 'DELETE',
                     });
                 }
@@ -392,26 +387,26 @@ const totalFinal = subtotal + envio + impuestos;
 
 <style>
     /* Estilos personalizados para el tema rojo */
-    .btn-error {
+    .bg-primary! {
         background-color: #dc2626;
         border-color: #dc2626;
     }
     
-    .btn-error:hover {
+    .bg-primary!:hover {
         background-color: #b91c1c;
         border-color: #b91c1c;
     }
     
-    .text-error {
+    .text-red-700 {
         color: #dc2626;
     }
     
-    .btn-outline.btn-error {
+    .btn-outline.bg-primary! {
         color: #dc2626;
         border-color: #dc2626;
     }
     
-    .btn-outline.btn-error:hover {
+    .btn-outline.bg-primary!:hover {
         background-color: #dc2626;
         border-color: #dc2626;
         color: white;

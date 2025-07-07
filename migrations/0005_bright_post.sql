@@ -1,0 +1,1 @@
+ALTER TABLE `imagenes` ADD `main` integer DEFAULT false;

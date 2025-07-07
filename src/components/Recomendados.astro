@@ -3,6 +3,7 @@ import { db } from "../db/db";
 import * as schema from "../db/schema";
 import { eq, sql } from "drizzle-orm";
 import ProductCard from "../components/react/ProductCard";
+import HomeSectionHeader from "./HomeSectionHeader.astro";
 
 // Traer productos recomendados
 const recomendados = await db
@@ -25,27 +26,24 @@ const recomendados = await db
 
 {
     recomendados.length > 0 && (
-        <section class="mt-12 w-full">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">
-                También te puede interesar
-            </h2>
-            
+        <section class="w-full">
+            <HomeSectionHeader title="También te puede interesar" />            
             <!-- Swiper -->
             <div class="swiper recomendados-swiper">
                 <div class="swiper-wrapper">
                     {recomendados.map(({ producto, imagen }) => (
                         <div class="swiper-slide">
-                            <ProductCard product={producto} image={imagen!} />
+                            <ProductCard client:load product={producto} image={imagen!} />
                         </div>
                     ))}
                 </div>
                 
                 <!-- Navegación -->
-                <div class="swiper-button-next bg-red-500! text-white!"></div>
-                <div class="swiper-button-prev bg-red-500! text-white!"></div>
+                <div class="swiper-button-next bg-primary! text-white!"></div>
+                <div class="swiper-button-prev bg-primary! text-white!"></div>
                 
                 <!-- Paginación -->
-                <div class="swiper-pagination text-red-500!"></div>
+                <div class="swiper-pagination text-red-700!"></div>
             </div>
         </section>
     )
@@ -100,6 +98,6 @@ const recomendados = await db
     .swiper-pagination {
         --swiper-pagination-bullet-size: 10px;
         --swiper-pagination-bullet-inactive-color: #374151;
-        --swiper-pagination-color: var(--color-red-500) !important;
+        --swiper-pagination-color: var(--color-red-700) !important;
     }
 </style>
