@@ -59,7 +59,7 @@ export default function ProductGrid({
                                 className={clsx(
                                     "btn",
                                     p === page
-                                        ? "bg-primary! bg-primary! text-white"
+                                        ? "bg-primary! text-white"
                                         : "btn-outline"
                                 )}
                                 key={p}
