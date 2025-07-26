@@ -1,27 +1,11 @@
 ---
-import { db } from "../db/db";
-import * as schema from "../db/schema";
-import { eq, sql } from "drizzle-orm";
-import ProductCard from "../components/react/ProductCard";
 import HomeSectionHeader from "./HomeSectionHeader.astro";
+import { getRecommendedProducts } from "../lib/api/products.api";
+import ProductCard from "./react/ProductCard";
 
 // Traer productos recomendados
-const recomendados = await db
-    .select({
-        producto: schema.productos,
-        imagen: schema.imagenes,
-    })
-    .from(schema.productosRecomendados)
-    .innerJoin(
-        schema.productos,
-        eq(schema.productosRecomendados.recomendadoId, schema.productos.id)
-    )
-    .leftJoin(
-        schema.imagenes,
-        eq(schema.productos.id, schema.imagenes.productoId)
-    )
-    .orderBy(sql`RANDOM()`)
-    .limit(10);
+const recomendados = await getRecommendedProducts()
+const token = Astro.locals.token;
 ---
 
 {
@@ -31,9 +15,9 @@ const recomendados = await db
             <!-- Swiper -->
             <div class="swiper recomendados-swiper">
                 <div class="swiper-wrapper">
-                    {recomendados.map(({ producto, imagen }) => (
+                    {recomendados.map((producto) => (
                         <div class="swiper-slide">
-                            <ProductCard client:load product={producto} image={imagen!} />
+                            <ProductCard client:load product={producto} token={token} />
                         </div>
                     ))}
                 </div>

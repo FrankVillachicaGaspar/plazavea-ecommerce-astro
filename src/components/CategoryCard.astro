@@ -1,18 +1,18 @@
 ---
 import { type Category } from "../db/schema";
 interface Props {
-  category: Category;
+    category: Category;
 }
 const { category }: Props = Astro.props;
 ---
 
-<a href={`/products/?categoria=${category.id}`} id={category.id.toString()} class="card bg-base-100 w-96 shadow-sm">
-  <figure>
-    <img src={category.imageUrl} alt="Shoes" />
-  </figure>
-  <div class="card-body">
-    <h2 class="card-title">
-      {category.nombre}
-    </h2>
-  </div>
+<a
+    href={`/products/?categoria=${category.id}`}
+    id={category.id.toString()}
+    class="bg-base-100"
+>
+    <img class="rounded-full w-40 h-40 border-4 border-red-400 object-fill" src={category.imageUrl} alt="Shoes" />
+    <p class="text-center">
+        {category.nombre}
+    </p>
 </a>

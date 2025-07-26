@@ -1,11 +1,8 @@
 ---
-import { db } from "../db/db";
+import { getDescuentosBanners } from "../lib/api/banner.api";
 import HomeSectionHeader from "./HomeSectionHeader.astro";
 
-const bannerDescuentoLista = await db.query.banners.findMany({
-  where: (banner, { and, eq }) =>
-    and(eq(banner.bannerType, 3), eq(banner.active, 1)),
-});
+const bannerDescuentoLista = await getDescuentosBanners();
 
 // Distribución en filas según tu layout deseado
 const layout = [3, 2, 1, 3];
@@ -19,21 +16,20 @@ for (const cantidad of layout) {
   index += cantidad;
 }
 ---
+
 <div class="space-y-6">
   <HomeSectionHeader title="Descuentos" />
-  
+
   {
     filas.map((fila) => (
       <div class={`grid gap-4 grid-cols-${fila.length}`}>
-        {
-          fila.map((banner) => (
-            <img
-              src={banner.url}
-              alt={banner.altText}
-              class="w-full h-auto object-cover rounded shadow"
-            />
-          ))
-        }
+        {fila.map((banner) => (
+          <img
+            src={banner.url}
+            alt={banner.altText}
+            class="w-full h-auto object-cover rounded shadow"
+          />
+        ))}
       </div>
     ))
   }

@@ -4,7 +4,7 @@ import { db } from "../db/db";
 import * as schema from "../db/schema";
 import { ShoppingCart } from "lucide-astro";
 
-const usuarioId = Astro.locals.user?.userId;
+const usuarioId = Astro.locals.user?.id;
 
 let carrito = undefined;
 
@@ -18,14 +18,11 @@ if (usuarioId) {
 
 <div class="dropdown dropdown-end">
     <a href="/carrito" class="btn btn-primary btn-circle">
-        <div
-            class="indicator text-white">
+        <div class="indicator text-white">
             <ShoppingCart />
-            <span id="
-            carrito-badge"
-            class="badge badge-sm indicator-item"
-        >
-            {carrito ? carrito[0].count : 0}
+            <span id="carrito-badge" class="badge badge-sm indicator-item bg-red-400 text-white">
+                {carrito ? carrito[0].count : 0}
+            </span>
         </div>
     </a>
 </div>

@@ -1,89 +1,194 @@
 ---
-import CarritoNavbar from "./CarritoNavbar.astro";
+import { db } from "../db/db";
+import { categorias } from "../db/schema";
+import NavbarCart from "./react/NavbarCart";
 import SearchInputNavbar from "./SearchInputNavbar.astro";
-import { LogOut, CircleUser, Package } from "lucide-astro";
+import { LogOut, CircleUser, Package, Menu } from "lucide-astro";
 
 const isAuthenticated = Astro.locals.isAuthenticated;
+const token = Astro.locals.token;
+
+const categories = await db.select().from(categorias).limit(10).all();
 ---
 
-<div class="container mx-auto">
-    <div class="navbar max-h-[70px]!">
-        <a href="/">
-            <img
-                src="https://plazavea.vteximg.com.br/arquivos/LogoPlazaVea.svg?v=638558150445000000"
-            />
-        </a>
-        <SearchInputNavbar />
-        <div class="flex gap-2">
-            <a href="/miscompras" class="text-white w-32 flex gap-1 items-center">
-                <Package />
-                Mis compras
-            </a>
-            {
-                isAuthenticated ? (
-                    <div class="dropdown">
-                        <div
-                            tabindex="0"
-                            role="button"
-                            class="btn btn-primary w-32"
-                        >
-                            <CircleUser />
-                            <p>Mi cuenta</p>
-                        </div>
-                        <ul
-                            tabindex="0"
-                            class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-xl space-y-2 border border-red-600"
-                        >
-                            <li>
-                                <a href="/perfil" class="text-[16px]">
-                                    Perfil
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/miscompras" class="text-[16px]">
-                                    Mis compras
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/favoritos" class="text-[16px]">
-                                    Mis favoritos
-                                </a>
-                            </li>
-                            <li>
-                                <button
-                                    id="btnLogout"
-                                    class="btn btn-error btn-outline hover:text-white text-[16px]"
-                                >
-                                    <LogOut />
-                                    Cerrar sesión
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                ) : (
-                    <div class="flex ">
-                        <a href="/login" class="btn btn-link text-white">
-                            Iniciar sesión
-                        </a>
-                        <a href="/registro" class="btn btn-link text-white">
-                            Registrarse
-                        </a>
-                    </div>
-                )
-            }
-            <CarritoNavbar />
-        </div>
+<div class="navbar bg-primary max-h-[70px] px-4">
+  <!-- Mobile menu button -->
+  <div class="navbar-start">
+    <div class="dropdown lg:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle me-4">
+        <Menu class="w-8 h-8 text-white" />
+      </div>
+      <ul
+        tabindex="0"
+        class="menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+      >
+        <li>
+          <a href="/miscompras" class="flex items-center gap-2 hover:underline"
+            ><Package class="w-4 h-4" />Mis compras</a
+          >
+        </li>
+
+        {
+          isAuthenticated ? (
+            <>
+              <li>
+                <a href="/perfil">Perfil</a>
+              </li>
+              <li>
+                <a href="/miscompras">Mis compras</a>
+              </li>
+              <li>
+                <button id="btnLogoutMobile" class="text-error">
+                  <LogOut class="w-4 h-4" />
+                  Cerrar sesión
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <a class="hover:underline!" href="/login">
+                  Iniciar sesión
+                </a>
+              </li>
+              <li>
+                <a class="hover:underline!" href="/registro">
+                  Registrarse
+                </a>
+              </li>
+            </>
+          )
+        }
+      </ul>
     </div>
+
+    <!-- Logo -->
+    <a href="/">
+      <img
+        src="https://plazavea.vteximg.com.br/arquivos/LogoPlazaVea.svg?v=638558150445000000"
+        alt="Plaza Vea"
+        class="h-8"
+      />
+    </a>
+    <div class="hidden lg:dropdown ms-4">
+      <div
+        tabindex="0"
+        role="button"
+        class="flex gap-1 items-center cursor-pointer"
+      >
+        <Menu class="w-8 h-8 text-white" />
+        <p class="text-white">Menú</p>
+      </div>
+      <ul
+        tabindex="0"
+        class="menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-3 shadow"
+      >
+        {
+          categories.map((categoria, key) => (
+            <li class="my-1 cursor-default">
+              <a href={`/products?categoria=${categoria.id}`}>
+                {key + 1}. {categoria.nombre}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- Search - Center on desktop, full width on mobile -->
+  <div class="navbar-center hidden md:min-w-md lg:flex">
+    <SearchInputNavbar />
+  </div>
+
+  <!-- Desktop navigation -->
+  <div class="navbar-end">
+    <div class="hidden lg:flex items-center gap-4 me-2">
+      <a
+        href="/miscompras"
+        class="flex gap-1 items-center normal-case text-white hover:underline"
+      >
+        <Package class="w-4 h-4" />
+        Mis compras
+      </a>
+
+      {
+        isAuthenticated ? (
+          <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-primary">
+              <CircleUser class="w-5 h-5" />
+              Mi cuenta
+            </div>
+            <ul
+              tabindex="0"
+              class="menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+            >
+              <li>
+                <a href="/perfil">Perfil</a>
+              </li>
+              <li>
+                <a href="/miscompras">Mis compras</a>
+              </li>
+              <li>
+                <button id="btnLogout" class="text-error">
+                  <LogOut class="w-4 h-4" />
+                  Cerrar sesión
+                </button>
+              </li>
+            </ul>
+          </div>
+        ) : (
+          <div class="flex gap-4">
+            <a href="/login" class="text-white hover:underline">
+              Iniciar sesión
+            </a>
+            <a href="/registro" class="text-white hover:underline">
+              Registrarse
+            </a>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Cart - always visible -->
+    <NavbarCart isAuthenticated={isAuthenticated} token={token} client:load />
+  </div>
+</div>
+
+<!-- Mobile search bar -->
+<div class="lg:hidden px-4 py-2 bg-base-200">
+  <SearchInputNavbar />
 </div>
 
 <script is:inline>
-    const btnLogout = document.getElementById("btnLogout");
+  function handleLogout() {
+    fetch("/api/logout", {
+      method: "POST",
+    })
+      .then((_) => (window.location = "/"))
+      .catch((_) => {});
+  }
 
-    btnLogout.addEventListener("click", () => {
-        fetch("/api/logout", {
-            method: "POST",
-        })
-            .then((_) => (window.location = "/"))
-            .catch((_) => {});
-    });
+  // Desktop logout
+  const btnLogout = document.getElementById("btnLogout");
+  if (btnLogout) {
+    btnLogout.addEventListener("click", handleLogout);
+  }
+
+  // Mobile logout
+  const btnLogoutMobile = document.getElementById("btnLogoutMobile");
+  if (btnLogoutMobile) {
+    btnLogoutMobile.addEventListener("click", handleLogout);
+  }
+
+  // Close dropdowns when clicking outside (DaisyUI handles this automatically, but we can add custom behavior if needed)
+  document.addEventListener("click", function (e) {
+    // Auto-close dropdowns on mobile after navigation
+    if (e.target.closest("a") && e.target.closest(".dropdown")) {
+      const dropdown = e.target.closest(".dropdown");
+      if (dropdown) {
+        dropdown.querySelector('[tabindex="0"]').blur();
+      }
+    }
+  });
 </script>

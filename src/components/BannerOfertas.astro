@@ -1,24 +1,21 @@
 ---
-import { db } from "../db/db";
+import { getOfertaBanners } from "../lib/api/banner.api";
 import HomeSectionHeader from "./HomeSectionHeader.astro";
 
-const bannerOfertaLista = await db.query.banners.findMany({
-    where: (banner, { eq }) => eq(banner.bannerType, 2),
-    limit: 3,
-});
+const bannerOfertaLista = await getOfertaBanners();
 ---
 
 <div>
-    <HomeSectionHeader withTimer title="¡Solo por hoy!" />
-    <div class="grid grid-cols-3 gap-3">
-        {
-            bannerOfertaLista.map((bannerOferta) => (
-                <img
-                    class="w-auto h-auto"
-                    src={bannerOferta.url}
-                    alt={bannerOferta.altText}
-                />
-            ))
-        }
-    </div>
+  <HomeSectionHeader withTimer title="¡Solo por hoy!" />
+  <div class="grid grid-cols-3 gap-3">
+    {
+      bannerOfertaLista.map((bannerOferta) => (
+        <img
+          class="w-auto h-auto"
+          src={bannerOferta.url}
+          alt={bannerOferta.altText}
+        />
+      ))
+    }
+  </div>
 </div>

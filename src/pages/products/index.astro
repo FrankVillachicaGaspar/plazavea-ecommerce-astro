@@ -2,36 +2,38 @@
 import Layout from "../../layouts/Layout.astro";
 import ProductGrid from "../../components/react/ProductGrid";
 import ProductFilters from "../../components/ProductFilters.astro";
-import {
-    getPaginatedProductsWithImagenAndFilters,
-    getProductTotalCount,
-} from "../../db/querys/productos";
+import { filterProduct } from "../../lib/api/products.api";
+
+const token = Astro.locals.token;
 
 const url = new URL(Astro.request.url);
 const categoria = url.searchParams.get("categoria");
 const precioMax = url.searchParams.get("precioMax");
 const orden = url.searchParams.get("orden");
 const page = url.searchParams.get("page") ?? 1;
+const searchText = url.searchParams.get("searchText") ?? "";
 const limit = 16;
 
-const { products, total } = await getPaginatedProductsWithImagenAndFilters(
-    limit,
-    Number(page),
-    categoria ? parseInt(categoria) : undefined,
-    orden ? orden : undefined,
-    precioMax ? parseFloat(precioMax) : undefined
+const { productos, total } = await filterProduct(
+  categoria ? parseInt(categoria) : undefined,
+  precioMax ? parseFloat(precioMax) : undefined,
+  orden ? parseInt(orden) : undefined,
+  searchText,
+  Number(page),
+  limit
 );
 ---
 
 <Layout>
-    <div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8 mt-10">
-        <ProductFilters />
-        <ProductGrid
-            client:load
-            productsWithImage={products}
-            page={Number(page)}
-            limit={limit}
-            totalCount={total}
-        />
-    </div>
+  <div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8 mt-10">
+    <ProductFilters />
+    <ProductGrid
+      client:load
+      products={productos}
+      page={Number(page)}
+      limit={limit}
+      totalCount={total}
+      token={token}
+    />
+  </div>
 </Layout>

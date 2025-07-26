@@ -1,13 +1,9 @@
 ---
-import BannerCarousel from '../components/react/BannerCarousel'
+import BannerCarousel from "../components/react/BannerCarousel";
 
+import { getPrincipalBanners } from "../lib/api/banner.api";
 
-import { db } from '../db/db';
-
-const banners = await db.query.banners.findMany({
-  orderBy: (banners, { asc }) => [asc(banners.id)],
-});
+const banners = await getPrincipalBanners();
 ---
-
 
 <BannerCarousel client:load banners={banners} />

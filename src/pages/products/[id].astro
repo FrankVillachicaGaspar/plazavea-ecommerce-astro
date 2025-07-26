@@ -6,87 +6,86 @@ import Recomendados from "../../components/Recomendados.astro";
 import DetalleProducto from "../../components/DetalleProducto.astro";
 
 export async function getStaticPaths() {
-    const productos = await db
-        .select({ id: schema.productos.id })
-        .from(schema.productos);
+  const productos = await db
+    .select({ id: schema.productos.id })
+    .from(schema.productos);
 
-    return productos.map((p) => ({
-        params: { id: p.id.toString() },
-    }));
+  return productos.map((p) => ({
+    params: { id: p.id.toString() },
+  }));
 }
 
 const isAuthenticated = Astro.locals.isAuthenticated;
-const userId = Astro.locals.user?.userId;
+const userId = Astro.locals.user?.id;
 
 const { id } = Astro.params;
 
 const producto = await db.query.productos.findFirst({
-    where: (t, { eq }) => eq(t.id, Number(id)),
+  where: (t, { eq }) => eq(t.id, Number(id)),
 });
 
 if (producto === undefined) {
-    Astro.redirect("/404");
-    return;
+  Astro.redirect("/404");
+  return;
 }
 
 const imagenes = await db.query.imagenes.findMany({
-    where: (t, { eq }) => eq(t.productoId, Number(id)),
+  where: (t, { eq }) => eq(t.productoId, Number(id)),
 });
 
 let carrito: schema.Carrito | undefined = undefined;
 
 if (userId) {
-    carrito = await db.query.carrito.findFirst({
-        where: (t, { eq, and }) =>
-            and(eq(t.productoId, Number(id)), eq(t.usuarioId, userId!)),
-    });
+  carrito = await db.query.carrito.findFirst({
+    where: (t, { eq, and }) =>
+      and(eq(t.productoId, Number(id)), eq(t.usuarioId, userId!)),
+  });
 }
 ---
 
 <Layout>
-    <DetalleProducto
-        isAuthenticated={isAuthenticated}
-        producto={producto}
-        carrito={carrito}
-        imagenes={imagenes}
-        userId={userId}
-    />
-    <Recomendados />
+  <DetalleProducto
+    isAuthenticated={isAuthenticated}
+    producto={producto}
+    carrito={carrito}
+    imagenes={imagenes}
+    userId={userId}
+  />
+  <Recomendados />
 </Layout>
 
 <script is:inline>
-    async function agregarAlCarrito(
-        productoId,
-        isAuthenticated = false,
-        userId
-    ) {
-        if (!isAuthenticated) window.location = "/login";
+  async function agregarAlCarrito(productoId, isAuthenticated = false, userId) {
+    if (!isAuthenticated) {
+      window.location = "/login";
+      return;
+    }
 
-        const carritoBtn = document.getElementById("carritoBtn");
-        const carritoBtnLoad = document.getElementById("carritoBtnLoad");
+    const carritoBtn = document.getElementById("carritoBtn");
+    const carritoBtnLoad = document.getElementById("carritoBtnLoad");
 
-        carritoBtn.hidden = true;
-        carritoBtnLoad.hidden = false;
+    carritoBtn.hidden = true;
+    carritoBtnLoad.hidden = false;
 
-        const res = fetch("/api/carrito", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productoId, userId }),
-        })
-            .then(async (res) => {
-                const nuevaCantidad = await res.json();
-                const badge = document.querySelector("#carrito-badge");
+    const res = fetch("/api/carrito", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productoId, userId }),
+    })
+      .then(async (res) => {
+        const nuevaCantidad = await res.json();
+        const badge = document.querySelector("#carrito-badge");
 
-                if (badge && carritoBtn) {
-                    badge.textContent = nuevaCantidad;
-                    carritoBtn.textContent = "Agregado al carrito";
-                    carritoBtn.disabled = true;
-                }
+        if (badge && carritoBtn) {
+          badge.textContent = nuevaCantidad;
+          carritoBtn.textContent = "Agregado al carrito";
+          carritoBtn.disabled = true;
+        }
 
-                const btnAgregarCarrito = document.getElementById(
-                    "buttonAgrogarCarrito"
-                );
-                btnAgregarCarrito.innerHTML = `
+        const btnAgregarCarrito = document.getElementById(
+          "buttonAgrogarCarrito"
+        );
+        btnAgregarCarrito.innerHTML = `
                     <a
                         href="/carrito"
                         class="btn btn-danger btn-ghost border-red-700  btn-lg w-full gap-2"
@@ -97,10 +96,10 @@ if (userId) {
                     </a>
                     <p class="text-gray-600 text-center text-xs">Tu producto ya se encuentra en el carrito</p>
                     `;
-            })
-            .catch((error) => {
-                carritoBtn.hidden = false;
-                carritoBtnLoad.hidden = true;
-            });
-    }
+      })
+      .catch((error) => {
+        carritoBtn.hidden = false;
+        carritoBtnLoad.hidden = true;
+      });
+  }
 </script>

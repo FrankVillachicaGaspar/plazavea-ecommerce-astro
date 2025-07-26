@@ -9,7 +9,7 @@ import Footer from "../components/Footer.astro";
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
         <meta name="generator" content={Astro.generator} />
         <link
             rel="stylesheet"
@@ -23,13 +23,13 @@ import Footer from "../components/Footer.astro";
             href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         />
 
-        <title>Ecommerse</title>
+        <title>Plaza vea</title>
     </head>
     <body class="grid grid-cols-1 grid-rows-[auto_1fr_auto] h-screen">
         <header class="bg-primary shadow-sm h-fit">
             <Navbar />
         </header>
-        <main class="container mx-auto mb-4">
+        <main class="container mx-auto mb-4 relative">
             <slot />
         </main>
         <Footer />

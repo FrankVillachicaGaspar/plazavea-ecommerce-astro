@@ -1,21 +1,19 @@
 ---
 import BannerDescuentos from "../components/BannerDescuentos.astro";
 import BannerOfertas from "../components/BannerOfertas.astro";
-import Banners from "../components/Banners.astro";
 import CategoryCard from "../components/CategoryCard.astro";
 import Recomendados from "../components/Recomendados.astro";
 import { db } from "../db/db";
-import Layout from "../layouts/Layout.astro";
+import BannerLayout from "../layouts/BannerLayout.astro";
 
 const categories = await db.query.categorias.findMany({
-    limit: 5,
+    limit: 8,
 });
 ---
 
-<Layout>
-    <Banners />
-    <h3 class="w-full text-center text-3xl font-bold my-14 text-gray-800">
-        Categorías
+<BannerLayout>
+    <h3 class="w-full text-2xl font-bold my-14 text-gray-800">
+        Explora las nuevas categorías
     </h3>
     <div class="w-full flex justify-between gap-3">
         {categories.map((category) => <CategoryCard category={category} />)}
@@ -23,4 +21,4 @@ const categories = await db.query.categorias.findMany({
     <BannerOfertas />
     <BannerDescuentos />
     <Recomendados />
-</Layout>
+</BannerLayout>

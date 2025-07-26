@@ -1,0 +1,211 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getProfile } from "../../lib/api/auth.api";
+
+const token = Astro.locals.token;
+
+const profile = await getProfile(token);
+console.log(profile)
+
+// Helper functions
+function calculateAge(birthDate: Date) {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    
+    return age;
+}
+
+function formatDate(dateString: Date) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+function formatDateTime(dateString: Date) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    }) + ' - ' + date.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Calculate dynamic values
+const age = calculateAge(profile.fechaNacimiento);
+const fullName = `${profile.nombre} ${profile.apellidos}`;
+const initials = profile.nombre.charAt(0) + profile.apellidos.split(' ')[0].charAt(0);
+const genderText = profile.genero === 'M' ? 'Masculino' : 'Femenino';
+const marketingStatus = profile.aceptaMarketing ? 'Marketing Activo' : 'Marketing Inactivo';
+---
+
+<Layout>
+    <div class="container mx-auto px-4 py-8">
+        <div class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <!-- Avatar -->
+                    <div class="avatar">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                            <img src={`https://api.dicebear.com/9.x/initials/svg?seed=${profile.nombre}`} alt={profile.nombre}>
+                        </div>
+                    </div>
+                    
+                    <!-- Basic Info -->
+                    <div class="flex-1 text-center md:text-left">
+                        <h1 class="text-3xl font-bold text-base-content mb-2">{fullName}</h1>
+                        <div class="flex flex-wrap gap-2 justify-center md:justify-start mb-4">
+                            <div class="badge badge-primary">{genderText}</div>
+                            <div class="badge badge-secondary">{age} años</div>
+                            <div class="badge badge-accent">{marketingStatus}</div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-4 text-sm">
+                            <div class="flex items-center gap-1">
+                                <i class="fas fa-envelope text-primary"></i>
+                                <span>{profile.email}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-phone text-primary"></i>
+                                <span>{profile.telefono}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Cards Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Personal Information -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">
+                        <i class="fas fa-user text-primary"></i>
+                        Información Personal
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Fecha de Nacimiento:</span>
+                            <span class="font-medium">{formatDate(profile.fechaNacimiento)}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Género:</span>
+                            <span class="font-medium">{genderText}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Tipo de Documento:</span>
+                            <span class="font-medium">{profile.tipoDocumento}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="font-semibold text-base-content/70">Número de Documento:</span>
+                            <span class="font-medium">{profile.numeroDocumento}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Information -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">
+                        <i class="fas fa-map-marker-alt text-primary"></i>
+                        Información de Ubicación
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Departamento:</span>
+                            <span class="font-medium">{profile.departamento}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Provincia:</span>
+                            <span class="font-medium">{profile.provincia}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Distrito:</span>
+                            <span class="font-medium">{profile.distrito}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Dirección:</span>
+                            <span class="font-medium">{profile.direccion}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Referencia:</span>
+                            <span class="font-medium">{profile.referencia}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="font-semibold text-base-content/70">Código Postal:</span>
+                            <span class="font-medium">{profile.codigoPostal}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">
+                        <i class="fas fa-user-clock text-primary"></i>
+                        Información de Cuenta
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Fecha de Registro:</span>
+                            <span class="font-medium">{formatDate(profile.fechaRegistro)}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-base-300">
+                            <span class="font-semibold text-base-content/70">Último Acceso:</span>
+                            <span class="font-medium">{formatDateTime(profile.ultimoAcceso)}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="font-semibold text-base-content/70">Marketing:</span>
+                            <div class="form-control">
+                                <label class="label cursor-pointer">
+                                    <input type="checkbox" checked={profile.aceptaMarketing} class="toggle toggle-primary" />
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">
+                        <i class="fas fa-bolt text-primary"></i>
+                        Acciones Rápidas
+                    </h2>
+                    <div class="space-y-3">
+                        <button class="btn btn-outline btn-block justify-start">
+                            <i class="fas fa-edit"></i>
+                            Actualizar Información Personal
+                        </button>
+                        <button class="btn btn-outline btn-block justify-start">
+                            <i class="fas fa-lock"></i>
+                            Cambiar Contraseña
+                        </button>
+                        <button class="btn btn-outline btn-block justify-start">
+                            <i class="fas fa-bell"></i>
+                            Configurar Notificaciones
+                        </button>
+                        <button class="btn btn-outline btn-block justify-start">
+                            <i class="fas fa-shield-alt"></i>
+                            Configuración de Privacidad
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>

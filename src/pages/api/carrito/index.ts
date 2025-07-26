@@ -3,7 +3,11 @@ import { db } from "../../../db/db";
 import * as schema from "../../../db/schema";
 import type { APIRoute } from "astro";
 
-export const POST: APIRoute = async ({ params, request }) => {
+/**
+ * Agregar productos al carrito
+ * @returns {Promise<Response>}
+ */
+export const POST: APIRoute = async ({ request }): Promise<Response> => {
     const body = await request.json();
     const { productoId, userId } = body;
 

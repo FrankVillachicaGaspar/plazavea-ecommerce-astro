@@ -1,0 +1,299 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getPayments } from "../../lib/api/payment.api";
+import { priceFormatterToPE } from "../../utils/priceFormatter";
+import type { IPayment } from "../../types/payment.type";
+
+// src/pages/miscompras.astro
+
+const token = Astro.locals.token;
+
+if (!token) {
+  return Astro.redirect('/login');
+}
+
+let payments: IPayment[] = [];
+let error = null;
+
+try {
+  payments = await getPayments(token);
+} catch (e) {
+  error = 'Error al cargar las compras';
+  console.error('Error fetching payments:', e);
+}
+---
+
+<Layout title="Mis Compras">
+  <div class="min-h-screen my-4">
+    <div class="max-w-6xl mx-auto px-4">
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="breadcrumbs text-sm">
+          <ul>
+            <li>
+              <a href="/" class="text-red-700">Inicio</a>
+            </li>
+            <li>Mis Compras</li>
+          </ul>
+        </div>
+        <h1 class="text-4xl font-bold text-base-content mt-4">
+          🛒 Mis Compras
+          {payments.length > 0 && (
+            <span class="text-lg font-normal text-base-content/70">
+              ({payments.length} {payments.length === 1 ? 'compra' : 'compras'})
+            </span>
+          )}
+        </h1>
+      </div>
+
+      {error && (
+        <div class="alert alert-error mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
+
+      {payments.length === 0 && !error ? (
+        <!-- Empty State -->
+        <div class="text-center py-16">
+          <div class="card bg-base-100 shadow-lg max-w-md mx-auto">
+            <div class="card-body items-center text-center">
+              <div class="w-24 h-24 bg-base-300 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  class="w-12 h-12 text-base-content/40"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+              </div>
+              <h2 class="card-title text-xl mb-2">No tienes compras aún</h2>
+              <p class="text-base-content/70 mb-6">
+                ¡Explora nuestros productos y realiza tu primera compra!
+              </p>
+              <div class="card-actions">
+                <a href="/products" class="btn btn-error text-white">
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
+                  </svg>
+                  Explorar productos
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <!-- Purchases List -->
+        <div class="space-y-6">
+          {payments.map((payment) => (
+            <div class="card bg-base-100 shadow-lg">
+              <div class="card-body">
+                <!-- Payment Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                  <div>
+                    <h2 class="card-title text-xl">
+                      Compra #{payment.id}
+                    </h2>
+                    <p class="text-base-content/70">
+                      Fecha: {new Date(payment.fecha).toLocaleDateString('es-PE', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-2xl font-bold text-red-700">
+                      {priceFormatterToPE.format(payment.total)}
+                    </div>
+                    <div class={`badge ${
+                      payment.estado === 'completado' ? 'badge-success' :
+                      payment.estado === 'pendiente' ? 'badge-warning' :
+                      payment.estado === 'cancelado' ? 'badge-error' :
+                      'badge-info'
+                    }`}>
+                      {payment.estado}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="grid md:grid-cols-2 gap-6">
+                  <!-- Products -->
+                  <div>
+                    <h3 class="font-semibold text-lg mb-3">Productos</h3>
+                    <div class="space-y-3">
+                      {payment.detail && payment.detail.map((item) => (
+                        <div class="flex gap-3 p-3 border border-base-300 rounded-lg">
+                          <div class="flex-shrink-0">
+                            <div class="w-16 h-16 bg-base-300 rounded-lg flex items-center justify-center">
+                              <img src={item.producto.urlImagen} alt={item.producto.nombre} class="w-full h-full object-cover rounded-lg">
+                            </div>
+                          </div>
+                          <div class="flex-1">
+                            <h4 class="font-medium text-base-content/70">
+                              Producto ID: {item.producto.id}
+                            </h4>
+                            <h4 class="font-medium text-base-content">
+                              {item.producto.descripcion}
+                            </h4>
+                            <p class="text-sm text-base-content/70">
+                              Cantidad: {item.cantidad}
+                            </p>
+                            <p class="text-sm text-base-content/70">
+                              Precio unitario: {priceFormatterToPE.format(item.precioUnitario)}
+                            </p>
+                            <p class="text-sm font-medium text-red-700">
+                              Total: {priceFormatterToPE.format(item.precioUnitario * item.cantidad)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <!-- Payment Summary -->
+                  <div>
+                    <h3 class="font-semibold text-lg mb-3">Resumen del pago</h3>
+                    <div class="space-y-3 p-4 bg-base-200 rounded-lg">
+                      <div class="flex justify-between">
+                        <span>Subtotal:</span>
+                        <span>{priceFormatterToPE.format(payment.subtotal || 0)}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Envío:</span>
+                        <span>{priceFormatterToPE.format(payment.envio || 0)}</span>
+                      </div>
+                    <div class="divider my-2"></div>
+                      <div class="flex justify-between text-lg font-bold">
+                        <span>Total:</span>
+                        <span class="text-red-700">
+                          {priceFormatterToPE.format(payment.total)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {payment.metodo && (
+                      <div class="mt-4">
+                        <h4 class="font-medium mb-2">Método de pago</h4>
+                        <div class="flex items-center gap-2 text-sm text-base-content/70">
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                            />
+                          </svg>
+                          <span>{payment.metodo}</span>
+                          {payment.ultima4 && (
+                            <span class="text-xs">•••• {payment.ultima4}</span>
+                          )}
+                        </div>
+                        {payment.nombreTarjeta && (
+                          <p class="text-xs text-base-content/50 mt-1">
+                            {payment.nombreTarjeta}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card-actions justify-end mt-6">
+                  {payment.estado === 'completado' && (
+                    <button class="btn btn-outline btn-sm">
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      Descargar factura
+                    </button>
+                  )}
+                  <a href={`/compra/${payment.id}`} class="btn btn-primary btn-sm">
+                    Ver detalles
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <!-- Back to Shopping -->
+      {payments.length > 0 && (
+        <div class="text-center mt-16">
+          <a href="/products" class="btn btn-outline">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16l-4-4m0 0l4-4m-4 4h18"
+              />
+            </svg>
+            Seguir comprando
+          </a>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>
+
+<style is:inline>
+  .badge-success {
+    @apply bg-green-100 text-green-800 border-green-200;
+  }
+  
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+  }
+  
+  .badge-error {
+    @apply bg-red-100 text-red-800 border-red-200;
+  }
+  
+  .badge-info {
+    @apply bg-blue-100 text-blue-800 border-blue-200;
+  }
+</style>

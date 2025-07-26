@@ -5,118 +5,49 @@ import FormularioPago from "../../components/pagos/FormularioPago.astro";
 ---
 
 <Layout>
-    <div class="max-w-6xl mx-auto mt-10">
-        <div class="grid lg:grid-cols-2 gap-8">
-            <!-- Resumen del pedido -->
-            <ResumenPedido />
+  <div class="max-w-6xl mx-auto mt-10">
+    <div class="grid lg:grid-cols-2 gap-8">
+      <!-- Resumen del pedido -->
+      <ResumenPedido />
 
-            <!-- Formulario de pago -->
-            <FormularioPago />
-        </div>
+      <!-- Formulario de pago -->
+      <FormularioPago />
     </div>
+  </div>
 </Layout>
-<script is:inline>
-    // Formatear número de tarjeta
-    document.addEventListener("DOMContentLoaded", function () {
-        const cardInput = document.querySelector(
-            'input[placeholder="1234 5678 9012 3456"]'
-        );
-        const expiryInput = document.querySelector(
-            'input[placeholder="MM/YY"]'
-        );
-        const cvvInput = document.querySelector('input[placeholder="123"]');
-
-        if (cardInput) {
-            cardInput.addEventListener("input", function (e) {
-                let value = e.target.value.replace(/\D/g, "");
-                value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
-                e.target.value = value;
-            });
-        }
-
-        if (expiryInput) {
-            expiryInput.addEventListener("input", function (e) {
-                let value = e.target.value.replace(/\D/g, "");
-                if (value.length >= 2) {
-                    value = value.substring(0, 2) + "/" + value.substring(2, 4);
-                }
-                e.target.value = value;
-            });
-        }
-
-        if (cvvInput) {
-            cvvInput.addEventListener("input", function (e) {
-                e.target.value = e.target.value.replace(/\D/g, "");
-            });
-        }
-
-        // Manejar cambio de método de pago
-        const paymentMethods = document.querySelectorAll(
-            'input[name="payment-method"]'
-        );
-        const cardDetails = document.getElementById("card-details");
-
-        paymentMethods.forEach((method) => {
-            method.addEventListener("change", function () {
-                if (this.value === "card") {
-                    cardDetails.style.display = "block";
-                } else {
-                    cardDetails.style.display = "none";
-                }
-            });
-        });
-
-        // Manejar envío del formulario
-        const form = document.querySelector("form");
-        if (form) {
-            form.addEventListener("submit", function (e) {
-                e.preventDefault();
-
-                // Aquí iría la lógica de procesamiento del pago
-                alert("Procesando pago... (Esta es una demo)");
-
-                // Simular proceso de pago
-                setTimeout(() => {
-                    alert("¡Pago procesado exitosamente!");
-                }, 2000);
-            });
-        }
-    });
-</script>
-
 <style>
-    /* Personalización adicional para el tema rojo */
-    .bg-primary! {
-        background-color: #dc2626;
-        border-color: #dc2626;
-    }
+  /* Personalización adicional para el tema rojo */
+  .bg-primary! {
+    background-color: #dc2626;
+    border-color: #dc2626;
+  }
 
-    .bg-primary!:hover {
-        background-color: #b91c1c;
-        border-color: #b91c1c;
-    }
+  .bg-primary!:hover {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+  }
 
-    .radio-error:checked {
-        background-color: #dc2626;
-        border-color: #dc2626;
-    }
+  .radio-error:checked {
+    background-color: #dc2626;
+    border-color: #dc2626;
+  }
 
-    .checkbox-error:checked {
-        background-color: #dc2626;
-        border-color: #dc2626;
-    }
+  .checkbox-error:checked {
+    background-color: #dc2626;
+    border-color: #dc2626;
+  }
 
-    .text-red-800 {
-        color: #dc2626;
-    }
+  .text-red-800 {
+    color: #dc2626;
+  }
 
-    .input:focus {
-        border-color: #dc2626;
-        box-shadow: 0 0 0 1px #dc2626;
-    }
+  .input:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 1px #dc2626;
+  }
 
-    .select:focus {
-        border-color: #dc2626;
-        box-shadow: 0 0 0 1px #dc2626;
-    }
+  .select:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 1px #dc2626;
+  }
 </style>
